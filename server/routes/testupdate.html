@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update Campaign</title>
+</head>
+<body>
+  <h2>Update Campaign</h2>
+  <form id="updateForm">
+    <label>Title: <input type="text" name="title" /></label><br><br>
+    <label>Goal Amount: <input type="number" name="goalAmount" /></label><br><br>
+    <label>End Date: <input type="date" name="endDate" /></label><br><br>
+    <label>Is Urgent:
+      <select name="isUrgent">
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+    </label><br><br>
+    <label>Tags (comma-separated): <input type="text" name="tags" /></label><br><br>
+    <label>New Image: <input type="file" name="images" /></label><br><br>
+    <button type="submit">Update Campaign</button>
+  </form>
+
+  <script>
+    document.getElementById('updateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      const campaignId = '683ed4be619ee11b5aea16d0'; // Replace this
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2RjZWM5OWVhNzUxM2RkMGJmNGI2NSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ4OTUwNDE3LCJleHAiOjE3NDg5NTQwMTd9.fKn0y-XaUz54m1EGEULhplVWbbKR9AaKMKnNnqKy4CA';        // Replace this
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/campaign/update/${campaignId}`, {
+          method: 'PUT',
+          headers: {
+            'x-auth-token': token
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+        console.log(data);
+        alert(JSON.stringify(data, null, 2));
+      } catch (err) {
+        console.error(err);
+        alert('Error updating campaign');
+      }
+    });
+  </script>
+</body>
+</html>

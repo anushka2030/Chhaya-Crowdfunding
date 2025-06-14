@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Campaign Actions</title>
+</head>
+<body>
+  <h2>Campaign Routes Test</h2>
+
+  <!-- JWT Token -->
+  <label>JWT Token: <input type="text" id="token" size="60" /></label><br><br>
+
+  <!-- Campaign ID -->
+  <label>Campaign ID: <input type="text" id="campaignId" size="40" /></label><br><br>
+
+  <!-- Donate -->
+  <h3>Donate</h3>
+  <input type="number" id="donationAmount" placeholder="Amount" />
+  <input type="text" id="donationMessage" placeholder="Message" />
+  <input type="text" id="paymentId" placeholder="Payment ID" />
+  <button onclick="donate()">Donate</button><br><br>
+
+  <!-- Withdraw -->
+  <h3>Withdraw</h3>
+  <input type="number" id="withdrawAmount" placeholder="Amount" />
+  <input type="text" id="accountNumber" placeholder="Account Number" />
+  <input type="text" id="ifsc" placeholder="IFSC Code" />
+  <input type="text" id="accHolder" placeholder="Account Holder Name" />
+  <button onclick="withdraw()">Withdraw</button><br><br>
+
+  <!-- Get all campaigns -->
+  <h3>Get All Campaigns</h3>
+  <button onclick="getAllCampaigns()">Get All</button><br><br>
+
+  <!-- Get campaign by ID -->
+  <h3>Get Campaign by ID</h3>
+  <button onclick="getById()">Get By ID</button><br><br>
+
+  <!-- Get user's campaigns -->
+  <h3>My Campaigns</h3>
+  <button onclick="getMyCampaigns()">Get My Campaigns</button><br><br>
+
+  <!-- Delete campaign -->
+  <h3>Delete Campaign</h3>
+  <button onclick="deleteCampaign()">Delete Campaign</button><br><br>
+
+  <pre id="output"></pre>
+
+  <script>
+    const base = 'http://localhost:5000/api/campaign';
+
+    function getToken() {
+      return document.getElementById('token').value.trim();
+    }
+
+    function getCampaignId() {
+      return document.getElementById('campaignId').value.trim();
+    }
+
+    function setOutput(data) {
+      document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function getAllCampaigns() {
+      const res = await fetch(`${base}/all`);
+      const data = await res.json();
+      setOutput(data);
+    }
+
+    async function getById() {
+      const id = getCampaignId();
+      const res = await fetch(`${base}/${id}`);
+      const data = await res.json();
+      setOutput(data);
+    }
+
+    async function getMyCampaigns() {
+      const res = await fetch(`${base}/user/my-campaigns`, {
+        headers: { 'x-auth-token': getToken() }
+      });
+      const data = await res.json();
+      setOutput(data);
+    }
+
+    async function donate() {
+      const id = getCampaignId();
+      const res = await fetch(`${base}/${id}/donate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': getToken()
+        },
+        body: JSON.stringify({
+          amount: parseFloat(document.getElementById('donationAmount').value),
+          message: document.getElementById('donationMessage').value,
+          paymentId: document.getElementById('paymentId').value,
+          isAnonymous: false
+        })
+      });
+      const data = await res.json();
+      setOutput(data);
+    }
+
+    async function withdraw() {
+      const id = getCampaignId();
+      const res = await fetch(`${base}/${id}/withdraw`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': getToken()
+        },
+        body: JSON.stringify({
+          amount: parseFloat(document.getElementById('withdrawAmount').value),
+          accountNumber: document.getElementById('accountNumber').value,
+          ifscCode: document.getElementById('ifsc').value,
+          accountHolderName: document.getElementById('accHolder').value
+        })
+      });
+      const data = await res.json();
+      setOutput(data);
+    }
+
+    async function deleteCampaign() {
+      const id = getCampaignId();
+      const res = await fetch(`${base}/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-auth-token': getToken() }
+      });
+      const data = await res.json();
+      setOutput(data);
+    }
+  </script>
+</body>
+</html>

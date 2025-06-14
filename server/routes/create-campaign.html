@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Campaign Creation Test</title>
+</head>
+<body>
+    <h2>Test Campaign Creation</h2>
+    
+    <div>
+        <strong>Instructions:</strong>
+        <ol>
+            <li>Get your JWT token by logging in through your auth endpoint</li>
+            <li>Enter the token below</li>
+            <li>Fill in all required campaign details</li>
+            <li>Select up to 5 image files (optional)</li>
+            <li>Click "Create Campaign"</li>
+        </ol>
+    </div>
+
+    <form id="campaignForm">
+        <div>
+            <label>JWT Token (Required):</label><br>
+            <input type="text" id="token" placeholder="Enter your JWT token" size="60">
+        </div><br>
+        
+        <h3>Campaign Details</h3>
+        
+        <div>
+            <label>Title (Required):</label><br>
+            <input type="text" id="title" value="Help Support Medical Treatment" required>
+        </div><br>
+        
+        <div>
+            <label>Description (Required):</label><br>
+            <textarea id="description" rows="4" cols="60" required>We are raising funds to help cover medical expenses for urgent treatment. Every contribution makes a difference.</textarea>
+        </div><br>
+        
+        <div>
+            <label>Cause ID (Required):</label><br>
+            <input type="text" id="cause" placeholder="Enter valid cause ObjectId" required>
+            <small>Get this from your causes collection</small>
+        </div><br>
+        
+        <div>
+            <label>Goal Amount (Required):</label><br>
+            <input type="number" id="goalAmount" value="50000" min="1" required>
+        </div><br>
+        
+        <div>
+            <label>End Date (Required):</label><br>
+            <input type="date" id="endDate" value="2025-12-31" required>
+        </div><br>
+        
+        <h3>Beneficiary Information</h3>
+        
+        <div>
+            <label>Beneficiary Name (Required):</label><br>
+            <input type="text" id="beneficiaryName" value="John Doe" required>
+        </div><br>
+        
+        <div>
+            <label>Relationship to Beneficiary (Required):</label><br>
+            <select id="beneficiaryRelationship" required>
+                <option value="">Select relationship</option>
+                <option value="self">Self</option>
+                <option value="family">Family Member</option>
+                <option value="friend">Friend</option>
+                <option value="colleague">Colleague</option>
+                <option value="community">Community Member</option>
+                <option value="other">Other</option>
+            </select>
+        </div><br>
+        
+        <div>
+            <label>Beneficiary Age (Optional):</label><br>
+            <input type="number" id="beneficiaryAge" value="35" min="1" max="120">
+        </div><br>
+        
+        <div>
+            <label>Beneficiary Details (Optional):</label><br>
+            <textarea id="beneficiaryDetails" rows="3" cols="60">Additional details about the beneficiary and their situation.</textarea>
+        </div><br>
+        
+        <h3>Location</h3>
+        
+        <div>
+            <label>Country (Required):</label><br>
+            <input type="text" id="country" value="India" required>
+        </div><br>
+        
+        <div>
+            <label>State (Required):</label><br>
+            <input type="text" id="state" value="Uttar Pradesh" required>
+        </div><br>
+        
+        <div>
+            <label>City (Required):</label><br>
+            <input type="text" id="city" value="Kanpur" required>
+        </div><br>
+        
+        <div>
+            <label>Pincode (Optional):</label><br>
+            <input type="text" id="pincode" value="208001">
+        </div><br>
+        
+        <h3>Additional Options</h3>
+        
+        <div>
+            <label>
+                <input type="checkbox" id="isUrgent"> Mark as Urgent
+            </label>
+        </div><br>
+        
+        <div>
+            <label>Tags (Optional, comma-separated):</label><br>
+            <input type="text" id="tags" placeholder="medical, emergency, family" size="40">
+        </div><br>
+        
+        <h3>Images (Optional - up to 5 files)</h3>
+        
+        <div>
+            <label>Image 1:</label><br>
+            <input type="file" id="image0" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
+            <label>Caption:</label><br>
+            <input type="text" id="imageCaption_0" placeholder="Image caption"><br><br>
+        </div>
+        
+        <div>
+            <label>Image 2:</label><br>
+            <input type="file" id="image1" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
+            <label>Caption:</label><br>
+            <input type="text" id="imageCaption_1" placeholder="Image caption"><br><br>
+        </div>
+        
+        <div>
+            <label>Image 3:</label><br>
+            <input type="file" id="image2" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
+            <label>Caption:</label><br>
+            <input type="text" id="imageCaption_2" placeholder="Image caption"><br><br>
+        </div>
+        
+        <div>
+            <label>Image 4:</label><br>
+            <input type="file" id="image3" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
+            <label>Caption:</label><br>
+            <input type="text" id="imageCaption_3" placeholder="Image caption"><br><br>
+        </div>
+        
+        <div>
+            <label>Image 5:</label><br>
+            <input type="file" id="image4" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
+            <label>Caption:</label><br>
+            <input type="text" id="imageCaption_4" placeholder="Image caption"><br><br>
+        </div>
+        
+        <button type="button" onclick="createCampaign()">Create Campaign</button>
+        <button type="button" onclick="clearForm()">Clear Form</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        async function createCampaign() {
+            const token = document.getElementById('token').value.trim();
+            
+            if (!token) {
+                alert('Please enter your JWT token');
+                return;
+            }
+
+            // Get all form values
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const cause = document.getElementById('cause').value.trim();
+            const goalAmount = document.getElementById('goalAmount').value;
+            const endDate = document.getElementById('endDate').value;
+            const beneficiaryName = document.getElementById('beneficiaryName').value.trim();
+            const beneficiaryRelationship = document.getElementById('beneficiaryRelationship').value;
+            const beneficiaryAge = document.getElementById('beneficiaryAge').value;
+            const beneficiaryDetails = document.getElementById('beneficiaryDetails').value.trim();
+            const country = document.getElementById('country').value.trim();
+            const state = document.getElementById('state').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const pincode = document.getElementById('pincode').value.trim();
+            const isUrgent = document.getElementById('isUrgent').checked;
+            const tags = document.getElementById('tags').value.trim();
+
+            // Validate required fields
+            if (!title || !description || !cause || !goalAmount || !endDate || 
+                !beneficiaryName || !beneficiaryRelationship || !country || !state || !city) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Create FormData
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('description', description);
+            formData.append('cause', cause);
+            formData.append('goalAmount', goalAmount);
+            formData.append('endDate', endDate);
+            formData.append('beneficiaryName', beneficiaryName);
+            formData.append('beneficiaryRelationship', beneficiaryRelationship);
+            if (beneficiaryAge) formData.append('beneficiaryAge', beneficiaryAge);
+            if (beneficiaryDetails) formData.append('beneficiaryDetails', beneficiaryDetails);
+            formData.append('country', country);
+            formData.append('state', state);
+            formData.append('city', city);
+            if (pincode) formData.append('pincode', pincode);
+            formData.append('isUrgent', isUrgent);
+            if (tags) formData.append('tags', tags);
+
+            // Add images and captions
+            for (let i = 0; i < 5; i++) {
+                const imageInput = document.getElementById(`image${i}`);
+                const captionInput = document.getElementById(`imageCaption_${i}`);
+                
+                if (imageInput && imageInput.files[0]) {
+                    formData.append('images', imageInput.files[0]);
+                    if (captionInput && captionInput.value.trim()) {
+                        formData.append(`imageCaption_${i}`, captionInput.value.trim());
+                    }
+                }
+            }
+
+            try {
+                showResult('Creating campaign...', 'info');
+                
+                const response = await fetch('http://localhost:5000/api/campaign/create', {
+                    method: 'POST',
+                    headers: {
+                        'x-auth-token': token
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('Campaign Created Successfully!', 'success', result);
+                } else {
+                    showResult('Error Creating Campaign', 'error', result);
+                }
+            } catch (error) {
+                showResult('Network Error', 'error', { message: error.message });
+            }
+        }
+
+        function showResult(title, type, data) {
+            const resultDiv = document.getElementById('result');
+            
+            let bgColor = '#f0f0f0';
+            let textColor = '#333';
+            let emoji = 'ℹ️';
+            
+            if (type === 'success') {
+                bgColor = '#d4edda';
+                textColor = '#155724';
+                emoji = '✅';
+            } else if (type === 'error') {
+                bgColor = '#f8d7da';
+                textColor = '#721c24';
+                emoji = '❌';
+            }
+            
+            resultDiv.innerHTML = `
+                <div style="margin-top: 20px; padding: 15px; background-color: ${bgColor}; color: ${textColor}; border: 1px solid #ccc;">
+                    <h3>${emoji} ${title}</h3>
+                    ${data ? '<pre>' + JSON.stringify(data, null, 2) + '</pre>' : ''}
+                </div>
+            `;
+        }
+
+        function clearForm() {
+            if (confirm('Are you sure you want to clear all form data?')) {
+                document.getElementById('campaignForm').reset();
+                document.getElementById('result').innerHTML = '';
+            }
+        }
+
+        // Set default end date to 3 months from now
+        window.onload = function() {
+            const today = new Date();
+            const futureDate = new Date(today);
+            futureDate.setMonth(futureDate.getMonth() + 3);
+            document.getElementById('endDate').value = futureDate.toISOString().split('T')[0];
+        };
+    </script>
+</body>
+</html>
