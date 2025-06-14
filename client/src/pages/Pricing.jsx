@@ -43,7 +43,7 @@ const PricingCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#06202B] via-[#077A7D] to-[#06202B]">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-[#077A7D] to-[#06202B]">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">

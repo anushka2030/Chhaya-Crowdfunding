@@ -1,9 +1,6 @@
 import React from 'react';
 import underTreeImg from '../assets/multiple people under tree.png';
 
-
-
-
 const HeroSection = () => {
   return (
     <div className="bg-gradient-to-br from-cyan-900 via-emerald-800 to-cyan-800 text-white py-10 relative overflow-hidden">

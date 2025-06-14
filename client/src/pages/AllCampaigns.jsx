@@ -140,7 +140,7 @@ const AllCampaigns = () => {
           <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto">Discover meaningful causes and make a difference in someone's life</p>
         </div>
 
-        {/* Filters */}
+        {/* Filters
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
           <div className="grid md:grid-cols-4 gap-4">
             <div className="relative">
@@ -167,7 +167,7 @@ const AllCampaigns = () => {
               <Filter className="w-4 h-4 mr-2" /> Apply Filters
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Error Message */}
         {error && (
