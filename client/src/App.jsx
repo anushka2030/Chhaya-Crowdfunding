@@ -19,6 +19,10 @@ import CampaignDetail from './pages/CampaignDetail';
 import DonationPage from './pages/DonationPage';
 import CreateCampaign from './pages/CreateCampaign';
 import Dashboard from './pages/Dashboard';
+import Users from './pages/Users';
+import Campaigns from './pages/Campaigns';
+import Raised from './pages/Raised';
+import Causes from './pages/Causes';
 
 function App() {
 
@@ -124,6 +128,15 @@ function App() {
           path="/login" 
           element={<Login onLogin={handleLogin} />} 
         />
+         
+  {/* Conditional dashboard routes */}
+  {isLoggedIn && user?.role === 'user' && (
+    <Route path="/user/dashboard" element={<Dashboard />} />
+  )}
+
+  {isLoggedIn && user?.role === 'admin' && (
+    <Route path="/admin/dashboard" element={<Dashboard />} />
+  )}
          <Route path="/" element={<CauseCards />} />
         <Route path="/cause/:id" element={<CauseCampaigns />} />
          <Route path="/" element={<><TopCampaigns /></>} />
@@ -133,7 +146,11 @@ function App() {
              <Route path="/campaign/:id" element={<CampaignDetail />} />
             <Route path="/campaign/:id/donate" element={<DonationPage />} />
                     <Route path="/start-fundraiser" element={<CreateCampaign />} />
-        <Route path= "/dashboard" element = {<Dashboard/>}/>
+        {/* <Route path= "/dashboard" element = {<Dashboard/>}/> */}
+        <Route path= "/admin/campaigns" element = {<Campaigns/>}/>
+        <Route path= "/admin/users" element = {<Users/>}/>
+        <Route path= "/admin/raised" element = {<Raised/>}/>
+        <Route path= "/admin/causes" element = {<Causes/>}/>
       </Routes>
       <Footer/>
     </div>

@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { Search, Heart, Users, GraduationCap, Home, Car, TreePine, Star, ArrowRight, Check, Shield, Clock, Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin, Menu, LogOut, Settings } from 'lucide-react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch} from 'react-redux';
 import { logoutUser } from '../store/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [mobileNav, setMobileNav] = useState("hidden");
   const { isLoggedIn, user, loading } = useSelector(state => state.auth);
   const dispatch = useDispatch();
-  
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     dispatch(logoutUser());
+    navigate("/");
   };
 
   const links = [
@@ -50,7 +53,7 @@ const Header = () => {
     return [
       {
         title: "Dashboard",
-        link: "/dashboard",
+        link: "/user/dashboard",
         icon: "📊"
       },
       {

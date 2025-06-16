@@ -33,7 +33,7 @@ const Login = () => {
   // ✅ Tell Redux immediately
   dispatch(authActions.loginSuccess({ user: data.user, token: data.token, role: data.user.role }));
 
-  navigate('/dashboard');
+  navigate('/');
 }
 else {
         // Login failed
