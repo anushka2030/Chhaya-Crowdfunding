@@ -1,290 +1,273 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Campaign Creation Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Campaign Creation</title>
 </head>
 <body>
-    <h2>Test Campaign Creation</h2>
+    <h1>Test Campaign Creation Form</h1>
     
-    <div>
-        <strong>Instructions:</strong>
-        <ol>
-            <li>Get your JWT token by logging in through your auth endpoint</li>
-            <li>Enter the token below</li>
-            <li>Fill in all required campaign details</li>
-            <li>Select up to 5 image files (optional)</li>
-            <li>Click "Create Campaign"</li>
-        </ol>
+    <div id="debug-info">
+        <h3>Debug Information:</h3>
+        <div id="debug-output"></div>
+    </div>
+    
+    <div id="error-info" style="color: red; display: none;">
+        <h3>Error Information:</h3>
+        <div id="error-output"></div>
+    </div>
+    
+    <div id="success-info" style="color: green; display: none;">
+        <h3>Success:</h3>
+        <div id="success-output"></div>
     </div>
 
-    <form id="campaignForm">
-        <div>
-            <label>JWT Token (Required):</label><br>
-            <input type="text" id="token" placeholder="Enter your JWT token" size="60">
-        </div><br>
+    <form id="campaignForm" enctype="multipart/form-data">
+        <h3>Required Fields:</h3>
         
-        <h3>Campaign Details</h3>
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" required><br><br>
         
-        <div>
-            <label>Title (Required):</label><br>
-            <input type="text" id="title" value="Help Support Medical Treatment" required>
-        </div><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
         
-        <div>
-            <label>Description (Required):</label><br>
-            <textarea id="description" rows="4" cols="60" required>We are raising funds to help cover medical expenses for urgent treatment. Every contribution makes a difference.</textarea>
-        </div><br>
+        <label for="cause">Cause ID:</label><br>
+        <input type="text" id="cause" name="cause" placeholder="Enter valid cause ObjectId" required><br><br>
         
-        <div>
-            <label>Cause ID (Required):</label><br>
-            <input type="text" id="cause" placeholder="Enter valid cause ObjectId" required>
-            <small>Get this from your causes collection</small>
-        </div><br>
+        <label for="goalAmount">Goal Amount:</label><br>
+        <input type="number" id="goalAmount" name="goalAmount" step="0.01" required><br><br>
         
-        <div>
-            <label>Goal Amount (Required):</label><br>
-            <input type="number" id="goalAmount" value="50000" min="1" required>
-        </div><br>
+        <label for="endDate">End Date:</label><br>
+        <input type="datetime-local" id="endDate" name="endDate" required><br><br>
         
-        <div>
-            <label>End Date (Required):</label><br>
-            <input type="date" id="endDate" value="2025-12-31" required>
-        </div><br>
+        <label for="beneficiaryName">Beneficiary Name:</label><br>
+        <input type="text" id="beneficiaryName" name="beneficiaryName" required><br><br>
         
-        <h3>Beneficiary Information</h3>
+        <label for="beneficiaryRelationship">Beneficiary Relationship:</label><br>
+        <input type="text" id="beneficiaryRelationship" name="beneficiaryRelationship" required><br><br>
         
-        <div>
-            <label>Beneficiary Name (Required):</label><br>
-            <input type="text" id="beneficiaryName" value="John Doe" required>
-        </div><br>
+        <label for="country">Country:</label><br>
+        <input type="text" id="country" name="country" required><br><br>
         
-        <div>
-            <label>Relationship to Beneficiary (Required):</label><br>
-            <select id="beneficiaryRelationship" required>
-                <option value="">Select relationship</option>
-                <option value="self">Self</option>
-                <option value="family">Family Member</option>
-                <option value="friend">Friend</option>
-                <option value="colleague">Colleague</option>
-                <option value="community">Community Member</option>
-                <option value="other">Other</option>
-            </select>
-        </div><br>
+        <label for="state">State:</label><br>
+        <input type="text" id="state" name="state" required><br><br>
         
-        <div>
-            <label>Beneficiary Age (Optional):</label><br>
-            <input type="number" id="beneficiaryAge" value="35" min="1" max="120">
-        </div><br>
+        <label for="city">City:</label><br>
+        <input type="text" id="city" name="city" required><br><br>
+
+        <h3>Optional Fields:</h3>
         
-        <div>
-            <label>Beneficiary Details (Optional):</label><br>
-            <textarea id="beneficiaryDetails" rows="3" cols="60">Additional details about the beneficiary and their situation.</textarea>
-        </div><br>
+        <label for="beneficiaryAge">Beneficiary Age:</label><br>
+        <input type="number" id="beneficiaryAge" name="beneficiaryAge"><br><br>
         
-        <h3>Location</h3>
+        <label for="beneficiaryDetails">Beneficiary Details:</label><br>
+        <textarea id="beneficiaryDetails" name="beneficiaryDetails" rows="3" cols="50"></textarea><br><br>
         
-        <div>
-            <label>Country (Required):</label><br>
-            <input type="text" id="country" value="India" required>
-        </div><br>
+        <label for="pincode">Pincode:</label><br>
+        <input type="text" id="pincode" name="pincode"><br><br>
         
-        <div>
-            <label>State (Required):</label><br>
-            <input type="text" id="state" value="Uttar Pradesh" required>
-        </div><br>
+        <label for="isUrgent">Is Urgent:</label><br>
+        <input type="checkbox" id="isUrgent" name="isUrgent" value="true"><br><br>
         
-        <div>
-            <label>City (Required):</label><br>
-            <input type="text" id="city" value="Kanpur" required>
-        </div><br>
+        <label for="tags">Tags (comma separated):</label><br>
+        <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3"><br><br>
+
+        <h3>Images (up to 5):</h3>
+        <label for="images">Select Images:</label><br>
+        <input type="file" id="images" name="images" multiple accept="image/*"><br><br>
         
-        <div>
-            <label>Pincode (Optional):</label><br>
-            <input type="text" id="pincode" value="208001">
-        </div><br>
+        <div id="image-captions"></div>
+
+        <h3>Authentication:</h3>
+        <label for="authToken">Auth Token (Bearer token):</label><br>
+        <input type="text" id="authToken" name="authToken" placeholder="Enter your JWT token"><br><br>
         
-        <h3>Additional Options</h3>
+        <h3>API Endpoint:</h3>
+        <label for="apiEndpoint">API Endpoint:</label><br>
+        <input type="text" id="apiEndpoint" name="apiEndpoint" value="http://localhost:5000/api/campaign/create" placeholder="Enter API endpoint"><br><br>
         
-        <div>
-            <label>
-                <input type="checkbox" id="isUrgent"> Mark as Urgent
-            </label>
-        </div><br>
-        
-        <div>
-            <label>Tags (Optional, comma-separated):</label><br>
-            <input type="text" id="tags" placeholder="medical, emergency, family" size="40">
-        </div><br>
-        
-        <h3>Images (Optional - up to 5 files)</h3>
-        
-        <div>
-            <label>Image 1:</label><br>
-            <input type="file" id="image0" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
-            <label>Caption:</label><br>
-            <input type="text" id="imageCaption_0" placeholder="Image caption"><br><br>
-        </div>
-        
-        <div>
-            <label>Image 2:</label><br>
-            <input type="file" id="image1" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
-            <label>Caption:</label><br>
-            <input type="text" id="imageCaption_1" placeholder="Image caption"><br><br>
-        </div>
-        
-        <div>
-            <label>Image 3:</label><br>
-            <input type="file" id="image2" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
-            <label>Caption:</label><br>
-            <input type="text" id="imageCaption_2" placeholder="Image caption"><br><br>
-        </div>
-        
-        <div>
-            <label>Image 4:</label><br>
-            <input type="file" id="image3" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
-            <label>Caption:</label><br>
-            <input type="text" id="imageCaption_3" placeholder="Image caption"><br><br>
-        </div>
-        
-        <div>
-            <label>Image 5:</label><br>
-            <input type="file" id="image4" accept="image/jpeg,image/jpg,image/png,image/webp"><br>
-            <label>Caption:</label><br>
-            <input type="text" id="imageCaption_4" placeholder="Image caption"><br><br>
-        </div>
-        
-        <button type="button" onclick="createCampaign()">Create Campaign</button>
-        <button type="button" onclick="clearForm()">Clear Form</button>
+        <button type="submit">Create Campaign</button>
+        <button type="button" onclick="testEndpoint()">Test Endpoint Availability</button>
     </form>
 
-    <div id="result"></div>
-
     <script>
-        async function createCampaign() {
-            const token = document.getElementById('token').value.trim();
+        const debugOutput = document.getElementById('debug-output');
+        const errorOutput = document.getElementById('error-output');
+        const successOutput = document.getElementById('success-output');
+        const errorInfo = document.getElementById('error-info');
+        const successInfo = document.getElementById('success-info');
+
+        function logDebug(message) {
+            console.log(message);
+            debugOutput.innerHTML += '<div>' + JSON.stringify(message, null, 2) + '</div>';
+        }
+
+        function logError(message) {
+            console.error(message);
+            errorOutput.innerHTML = '<div>' + JSON.stringify(message, null, 2) + '</div>';
+            errorInfo.style.display = 'block';
+            successInfo.style.display = 'none';
+        }
+
+        function logSuccess(message) {
+            console.log(message);
+            successOutput.innerHTML = '<div>' + JSON.stringify(message, null, 2) + '</div>';
+            successInfo.style.display = 'block';
+            errorInfo.style.display = 'none';
+        }
+
+        // Handle image selection to show caption inputs
+        document.getElementById('images').addEventListener('change', function(e) {
+            const captionsDiv = document.getElementById('image-captions');
+            captionsDiv.innerHTML = '';
             
-            if (!token) {
-                alert('Please enter your JWT token');
-                return;
+            for (let i = 0; i < e.target.files.length; i++) {
+                const file = e.target.files[i];
+                captionsDiv.innerHTML += `
+                    <div>
+                        <label for="imageCaption_${i}">Caption for ${file.name}:</label><br>
+                        <input type="text" id="imageCaption_${i}" name="imageCaption_${i}" placeholder="Optional caption"><br><br>
+                    </div>
+                `;
             }
+        });
 
-            // Get all form values
-            const title = document.getElementById('title').value.trim();
-            const description = document.getElementById('description').value.trim();
-            const cause = document.getElementById('cause').value.trim();
-            const goalAmount = document.getElementById('goalAmount').value;
-            const endDate = document.getElementById('endDate').value;
-            const beneficiaryName = document.getElementById('beneficiaryName').value.trim();
-            const beneficiaryRelationship = document.getElementById('beneficiaryRelationship').value;
-            const beneficiaryAge = document.getElementById('beneficiaryAge').value;
-            const beneficiaryDetails = document.getElementById('beneficiaryDetails').value.trim();
-            const country = document.getElementById('country').value.trim();
-            const state = document.getElementById('state').value.trim();
-            const city = document.getElementById('city').value.trim();
-            const pincode = document.getElementById('pincode').value.trim();
-            const isUrgent = document.getElementById('isUrgent').checked;
-            const tags = document.getElementById('tags').value.trim();
-
-            // Validate required fields
-            if (!title || !description || !cause || !goalAmount || !endDate || 
-                !beneficiaryName || !beneficiaryRelationship || !country || !state || !city) {
-                alert('Please fill in all required fields');
-                return;
-            }
-
-            // Create FormData
+        document.getElementById('campaignForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous outputs
+            debugOutput.innerHTML = '';
+            errorOutput.innerHTML = '';
+            successOutput.innerHTML = '';
+            errorInfo.style.display = 'none';
+            successInfo.style.display = 'none';
+            
+            logDebug('Form submission started');
+            
             const formData = new FormData();
-            formData.append('title', title);
-            formData.append('description', description);
-            formData.append('cause', cause);
-            formData.append('goalAmount', goalAmount);
-            formData.append('endDate', endDate);
-            formData.append('beneficiaryName', beneficiaryName);
-            formData.append('beneficiaryRelationship', beneficiaryRelationship);
-            if (beneficiaryAge) formData.append('beneficiaryAge', beneficiaryAge);
-            if (beneficiaryDetails) formData.append('beneficiaryDetails', beneficiaryDetails);
-            formData.append('country', country);
-            formData.append('state', state);
-            formData.append('city', city);
-            if (pincode) formData.append('pincode', pincode);
-            formData.append('isUrgent', isUrgent);
-            if (tags) formData.append('tags', tags);
-
-            // Add images and captions
-            for (let i = 0; i < 5; i++) {
-                const imageInput = document.getElementById(`image${i}`);
-                const captionInput = document.getElementById(`imageCaption_${i}`);
+            const form = e.target;
+            
+            // Add all form fields to FormData
+            const formElements = form.elements;
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i];
                 
-                if (imageInput && imageInput.files[0]) {
-                    formData.append('images', imageInput.files[0]);
-                    if (captionInput && captionInput.value.trim()) {
-                        formData.append(`imageCaption_${i}`, captionInput.value.trim());
+                if (element.name && element.name !== 'images' && element.name !== 'authToken') {
+                    if (element.type === 'checkbox') {
+                        if (element.checked) {
+                            formData.append(element.name, element.value);
+                        }
+                    } else if (element.value) {
+                        formData.append(element.name, element.value);
                     }
                 }
             }
-
+            
+            // Add images
+            const imageFiles = document.getElementById('images').files;
+            for (let i = 0; i < imageFiles.length; i++) {
+                formData.append('images', imageFiles[i]);
+            }
+            
+            // Debug: Log FormData contents
+            logDebug('FormData contents:');
+            for (let [key, value] of formData.entries()) {
+                if (value instanceof File) {
+                    logDebug(`${key}: File - ${value.name} (${value.size} bytes)`);
+                } else {
+                    logDebug(`${key}: ${value}`);
+                }
+            }
+            
+            const authToken = document.getElementById('authToken').value;
+            
+            if (!authToken) {
+                logError('Auth token is required');
+                return;
+            }
+            
             try {
-                showResult('Creating campaign...', 'info');
+                const apiEndpoint = document.getElementById('apiEndpoint').value;
+                logDebug(`Sending request to ${apiEndpoint}`);
                 
-                const response = await fetch('http://localhost:5000/api/campaign/create', {
+                const response = await fetch(apiEndpoint, {
                     method: 'POST',
                     headers: {
-                        'x-auth-token': token
+                        'Authorization': `Bearer ${authToken}`
                     },
                     body: formData
                 });
-
-                const result = await response.json();
+                
+                logDebug(`Response status: ${response.status}`);
+                logDebug(`Response headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                const responseText = await response.text();
+                logDebug(`Raw response: ${responseText}`);
+                
+                let responseData;
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (parseError) {
+                    logError(`Failed to parse response as JSON: ${parseError.message}`);
+                    logError(`Raw response: ${responseText}`);
+                    return;
+                }
                 
                 if (response.ok) {
-                    showResult('Campaign Created Successfully!', 'success', result);
+                    logSuccess('Campaign created successfully!');
+                    logSuccess(responseData);
                 } else {
-                    showResult('Error Creating Campaign', 'error', result);
+                    logError(`Request failed with status ${response.status}`);
+                    logError(responseData);
                 }
+                
             } catch (error) {
-                showResult('Network Error', 'error', { message: error.message });
+                logError(`Network error: ${error.message}`);
+                logError(`Full error: ${error.stack}`);
+            }
+        });
+
+        // Set default end date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('endDate').value = tomorrow.toISOString().slice(0, 16);
+        
+        // Test endpoint function
+        async function testEndpoint() {
+            const apiEndpoint = document.getElementById('apiEndpoint').value;
+            const authToken = document.getElementById('authToken').value;
+            
+            logDebug(`Testing endpoint: ${apiEndpoint}`);
+            
+            try {
+                // Test with OPTIONS request first
+                const optionsResponse = await fetch(apiEndpoint, {
+                    method: 'OPTIONS',
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                
+                logDebug(`OPTIONS Response status: ${optionsResponse.status}`);
+                logDebug(`OPTIONS Response headers: ${JSON.stringify([...optionsResponse.headers.entries()])}`);
+                
+                // Test with GET request
+                const getResponse = await fetch(apiEndpoint, {
+                    method: 'GET',
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                
+                logDebug(`GET Response status: ${getResponse.status}`);
+                logDebug(`GET Response headers: ${JSON.stringify([...getResponse.headers.entries()])}`);
+                
+                const getResponseText = await getResponse.text();
+                logDebug(`GET Response body: ${getResponseText}`);
+                
+            } catch (error) {
+                logError(`Endpoint test error: ${error.message}`);
             }
         }
-
-        function showResult(title, type, data) {
-            const resultDiv = document.getElementById('result');
-            
-            let bgColor = '#f0f0f0';
-            let textColor = '#333';
-            let emoji = 'ℹ️';
-            
-            if (type === 'success') {
-                bgColor = '#d4edda';
-                textColor = '#155724';
-                emoji = '✅';
-            } else if (type === 'error') {
-                bgColor = '#f8d7da';
-                textColor = '#721c24';
-                emoji = '❌';
-            }
-            
-            resultDiv.innerHTML = `
-                <div style="margin-top: 20px; padding: 15px; background-color: ${bgColor}; color: ${textColor}; border: 1px solid #ccc;">
-                    <h3>${emoji} ${title}</h3>
-                    ${data ? '<pre>' + JSON.stringify(data, null, 2) + '</pre>' : ''}
-                </div>
-            `;
-        }
-
-        function clearForm() {
-            if (confirm('Are you sure you want to clear all form data?')) {
-                document.getElementById('campaignForm').reset();
-                document.getElementById('result').innerHTML = '';
-            }
-        }
-
-        // Set default end date to 3 months from now
-        window.onload = function() {
-            const today = new Date();
-            const futureDate = new Date(today);
-            futureDate.setMonth(futureDate.getMonth() + 3);
-            document.getElementById('endDate').value = futureDate.toISOString().split('T')[0];
-        };
+        
+        logDebug('Form initialized');
     </script>
 </body>
 </html>

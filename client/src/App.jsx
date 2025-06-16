@@ -17,6 +17,8 @@ import Pricing from './pages/Pricing';
 import FAQs from './pages/FAQs';
 import CampaignDetail from './pages/CampaignDetail';
 import DonationPage from './pages/DonationPage';
+import CreateCampaign from './pages/CreateCampaign';
+import Dashboard from './pages/Dashboard';
 
 function App() {
 
@@ -130,6 +132,8 @@ function App() {
                                 <Route path="/faqs" element={<FAQs />} />
              <Route path="/campaign/:id" element={<CampaignDetail />} />
             <Route path="/campaign/:id/donate" element={<DonationPage />} />
+                    <Route path="/start-fundraiser" element={<CreateCampaign />} />
+        <Route path= "/dashboard" element = {<Dashboard/>}/>
       </Routes>
       <Footer/>
     </div>

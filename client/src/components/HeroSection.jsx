@@ -34,8 +34,8 @@ const HeroSection = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <a 
-                href="/create-campaign"
+              {/* <a 
+                href="/start-fundraiser"
                 className="group bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white px-8 py-4 rounded-xl text-lg font-bold transition-all duration-300 shadow-2xl hover:shadow-emerald-500/30 hover:scale-105 border border-emerald-400/30"
               >
                 <span className="flex items-center justify-center space-x-2">
@@ -44,16 +44,16 @@ const HeroSection = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                 </span>
-              </a>
+              </a> */}
               
-              <button className="group border-2 border-teal-300/60 text-teal-100 hover:bg-gradient-to-r hover:from-teal-700/50 hover:to-emerald-700/50 hover:text-white px-8 py-4 rounded-xl text-lg font-medium transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-teal-500/20 hover:border-teal-300">
+              <a href="/campaigns" className="group border-2 border-teal-300/60 text-teal-100 hover:bg-gradient-to-r hover:from-teal-700/50 hover:to-emerald-700/50 hover:text-white px-8 py-4 rounded-xl text-lg font-medium transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-teal-500/20 hover:border-teal-300">
                 <span className="flex items-center justify-center space-x-2">
                   <span>Explore Campaigns</span>
                   <svg className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </span>
-              </button>
+              </a>
             </div>
             
            

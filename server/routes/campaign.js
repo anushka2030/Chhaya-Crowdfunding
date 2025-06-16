@@ -8,18 +8,19 @@ const upload = require('../middleware/upload');
 const mongoose = require('mongoose');
 
 // JWT Middleware
-const authMiddleware = (req, res, next) => {
-  const token = req.header('x-auth-token');
-  if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+// const authMiddleware = (req, res, next) => {
+//   const token = req.header('x-auth-token');
+//   if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(400).json({ msg: 'Token is not valid' });
-  }
-};
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     req.user = decoded;
+//     next();
+//   } catch (err) {
+//     res.status(400).json({ msg: 'Token is not valid' });
+//   }
+// };
+const authMiddleware = require('../middleware/authMiddleware');
 
 // Create campaign with multiple image uploads
 router.post('/create', authMiddleware, upload.array('images', 5), async (req, res) => {
@@ -180,67 +181,6 @@ router.put('/update/:id', authMiddleware, upload.array('images', 5), async (req,
   }
 });
 
-// Get all campaigns with filters
-router.get('/all', async (req, res) => {
-  try {
-    const { 
-      status = 'active', 
-      cause, 
-      location, 
-      page = 1, 
-      limit = 10,
-      sortBy = 'createdAt',
-      sortOrder = 'desc'
-    } = req.query;
-
-    const query = { status };
-    
-    if (cause) query.cause = cause;
-    if (location) {
-      query['location.city'] = new RegExp(location, 'i');
-    }
-
-    const campaigns = await Campaign.find(query)
-      .populate('creator', 'name profilePicture')
-      .populate('cause', 'name icon color')
-      .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-
-    const total = await Campaign.countDocuments(query);
-
-    res.json({
-      campaigns,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    });
-  } catch (err) {
-    console.error('Error fetching campaigns:', err);
-    res.status(500).json({ msg: 'Server error', error: err.message });
-  }
-});
-
-// Get campaign by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const campaign = await Campaign.findById(req.params.id)
-      .populate('creator', 'name profilePicture location isVerified')
-      .populate('cause', 'name icon color')
-      .populate('donations.donor', 'name profilePicture');
-    
-    if (!campaign) return res.status(404).json({ msg: 'Campaign not found' });
-    
-    res.json(campaign);
-  } catch (err) {
-    console.error('Error fetching campaign:', err);
-    res.status(500).json({ msg: 'Server error', error: err.message });
-  }
-});
-
 // Donate to a campaign
 router.post('/:id/donate', authMiddleware, async (req, res) => {
   try {
@@ -301,19 +241,6 @@ router.post('/:id/donate', authMiddleware, async (req, res) => {
   }
 });
 
-// Get user's campaigns
-router.get('/user/my-campaigns', authMiddleware, async (req, res) => {
-  try {
-    const campaigns = await Campaign.find({ creator: req.user.id })
-      .populate('cause', 'name icon')
-      .sort({ createdAt: -1 });
-    
-    res.json(campaigns);
-  } catch (err) {
-    console.error('Error fetching user campaigns:', err);
-    res.status(500).json({ msg: 'Server error', error: err.message });
-  }
-});
 
 // Request withdrawal
 router.post('/:id/withdraw', authMiddleware, async (req, res) => {
@@ -380,5 +307,85 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ msg: 'Server error', error: err.message });
   }
 });
+
+// Get all campaigns with filters
+router.get('/all', async (req, res) => {
+  try {
+    const { 
+      status = 'active', 
+      cause, 
+      location, 
+      page = 1, 
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
+    const query = { status };
+    
+    if (cause) query.cause = cause;
+    if (location) {
+      query['location.city'] = new RegExp(location, 'i');
+    }
+
+    const campaigns = await Campaign.find(query)
+      .populate('creator', 'name profilePicture')
+      .populate('cause', 'name icon color')
+      .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+
+    const total = await Campaign.countDocuments(query);
+
+    res.json({
+      campaigns,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (err) {
+    console.error('Error fetching campaigns:', err);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+});
+
+// Get campaign by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const campaign = await Campaign.findById(req.params.id)
+      .populate('creator', 'name profilePicture location isVerified')
+      .populate('cause', 'name icon color')
+      .populate('donations.donor', 'name profilePicture');
+    
+    if (!campaign) return res.status(404).json({ msg: 'Campaign not found' });
+    
+    res.json(campaign);
+  } catch (err) {
+    console.error('Error fetching campaign:', err);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+});
+
+
+
+// Get user's campaigns
+router.get('/user/my-campaigns', authMiddleware, async (req, res) => {
+  try {
+    const campaigns = await Campaign.find({ creator: req.user.id })
+      .populate('cause', 'name icon')
+      .sort({ createdAt: -1 });
+    
+    res.json(campaigns);
+  } catch (err) {
+    console.error('Error fetching user campaigns:', err);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+});
+
+
+
 
 module.exports = router;

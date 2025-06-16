@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Heart, Users, GraduationCap, Home, Car, TreePine, Star, ArrowRight, Check, Shield, Clock, Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin, Menu } from 'lucide-react';
+import { Search, Heart, Users, GraduationCap, Home, Car, TreePine, Star, ArrowRight, Check, Shield, Clock, Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin, Menu, LogOut, Settings } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../store/auth';
 
@@ -31,18 +31,37 @@ const Header = () => {
     },
   ];
 
-  // Add authenticated user links only when logged in
-  const authenticatedLinks = isLoggedIn ? [
-    {
-      title: "Dashboard",
-      link: "/dashboard",
-    },
-    {
-      title: "Profile",
-      link: "/profile",
-    },
-  ] : [];
+  // Add authenticated user links based on user role
+  const getAuthenticatedLinks = () => {
+    if (!isLoggedIn) return [];
+    
+    // Admin gets only admin dashboard
+    if (user?.role === 'admin') {
+      return [
+        {
+          title: "Admin Dashboard",
+          link: "/admin/dashboard",
+          icon: "⚙️"
+        }
+      ];
+    }
+    
+    // Regular users get dashboard and profile
+    return [
+      {
+        title: "Dashboard",
+        link: "/dashboard",
+        icon: "📊"
+      },
+      {
+        title: "Profile",
+        link: "/profile",
+        icon: "👤"
+      }
+    ];
+  };
 
+  const authenticatedLinks = getAuthenticatedLinks();
   const displayLinks = [...links, ...authenticatedLinks];
 
   return (
@@ -55,9 +74,7 @@ const Header = () => {
               {/* Logo */}
               <div className="flex-shrink-0">
                 <a href="/" className="flex items-center group">
-                  {/* <div className="bg-gradient-to-r from-teal-400 to-emerald-400 p-2 rounded-xl shadow-lg group-hover:shadow-teal-400/30 transition-all duration-300 group-hover:scale-105"> */}
-                    <h1 className="text-2xl  text-teal-100 drop-shadow-sm font-extralight">Chhaya</h1>
-                  {/* </div> */}
+                  <h1 className="text-2xl text-teal-100 drop-shadow-sm font-extralight">Chhaya</h1>
                 </a>
               </div>
               
@@ -78,18 +95,8 @@ const Header = () => {
             
             {/* Right side - Auth Buttons and User Links */}
             <div className="flex items-center space-x-3">
-              {/* Authenticated user links */}
-              {isLoggedIn && authenticatedLinks.map((item, i) => (
-                <a
-                  href={item.link}
-                  className="hidden md:block text-white hover:text-teal-200 border-2 border-teal-400/60 hover:border-teal-300 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-teal-700/30 hover:shadow-lg backdrop-blur-sm"
-                  key={`auth-${i}`}
-                >
-                  {item.title}
-                </a>
-              ))}
-
               {!isLoggedIn ? (
+                // Not logged in state
                 <div className="hidden md:flex items-center space-x-3">
                   <a 
                     href="/start-fundraiser"
@@ -111,19 +118,34 @@ const Header = () => {
                   </a>
                 </div>
               ) : (
-               <div>
-                 <button 
-                  onClick={handleLogout}
-                  className="hidden md:block text-teal-200 hover:text-white px-4 py-2.5 text-sm font-medium border-2 border-cyan-400/60 hover:border-cyan-500 rounded-2xl hover:bg-teal-600/30 transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-red-500/20"
-                >
-                  Logout
-                </button>
-                <a 
+                // Logged in state - properly grouped
+                <div className="hidden md:flex items-center space-x-3">
+                  {/* Authenticated user links */}
+                  {authenticatedLinks.map((item, i) => (
+                    <a
+                      href={item.link}
+                      className="text-white hover:text-teal-200 border-2 border-teal-400/60 hover:border-teal-300 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-teal-700/30 hover:shadow-lg backdrop-blur-sm flex items-center gap-2"
+                      key={`auth-${i}`}
+                    >
+                      {item.icon && <span>{item.icon}</span>}
+                      {item.title}
+                    </a>
+                  ))}
+                  
+                  <a 
                     href="/start-fundraiser"
                     className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg hover:shadow-emerald-500/30 hover:scale-105 border border-emerald-400/30"
                   >
                     🚀 Start Fundraiser
                   </a>
+                  
+                  <button 
+                    onClick={handleLogout}
+                    className="text-red-200 hover:text-white px-4 py-2.5 text-sm font-medium border-2 border-red-400/60 hover:border-red-300 rounded-2xl hover:bg-red-600/30 transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-red-500/20 flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
                 </div>
               )}
 
@@ -152,9 +174,9 @@ const Header = () => {
         ></div>
         
         {/* Menu Content */}
-        <div className="relative bg-gradient-to-br from-white via-slate-50 to-teal-50 h-full w-80 ml-auto shadow-2xl border-l-2 border-teal-200/50 rounded-tl-3xl">
+        <div className="relative bg-gradient-to-br from-white via-slate-50 to-teal-50 h-full w-80 max-w-[85vw] ml-auto shadow-2xl border-l-2 border-teal-200/50 rounded-tl-3xl">
           {/* Header with Logo and Close */}
-          <div className="flex items-center justify-between p-6 border-b-2 border-teal-200/50 bg-gradient-to-r from-teal-100 to-emerald-100 rounded-tl-3xl">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b-2 border-teal-200/50 bg-gradient-to-r from-teal-100 to-emerald-100 rounded-tl-3xl">
             <div className="flex items-center space-x-3">
               <div className="bg-gradient-to-r from-teal-500 to-emerald-500 p-2 rounded-lg shadow-md">
                 <h2 className="text-lg font-bold text-white">Chhaya</h2>
@@ -171,63 +193,93 @@ const Header = () => {
           </div>
           
           {/* Navigation Links */}
-          <div className="py-6 space-y-2">
-            {displayLinks.map((item, i) => (
-              <a
-                href={item.link}
-                className={`block mx-4 px-4 py-3 text-slate-700 hover:text-teal-700 font-medium transition-all duration-300 rounded-xl hover:shadow-md ${
-                  item.title === "Profile" || item.title === "Dashboard" 
-                    ? "border-l-4 border-teal-500 bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 shadow-sm" 
-                    : "hover:bg-gradient-to-r hover:from-teal-50 hover:to-emerald-50"
-                }`}
-                key={i}
-                onClick={() => setMobileNav("hidden")}
-              >
-                <span className="flex items-center">
-                  {item.title === "Profile" && "👤 "}
-                  {item.title === "Dashboard" && "📊 "}
-                  {item.title}
-                </span>
-              </a>
-            ))}
+          <div className="py-4 sm:py-6 space-y-2 flex-1 overflow-y-auto">
+            {/* Show different links based on user role */}
+            {user?.role === 'admin' ? (
+              // Admin only sees Admin Dashboard
+              authenticatedLinks.map((item, i) => (
+                <a
+                  href={item.link}
+                  className="block mx-3 sm:mx-4 px-3 sm:px-4 py-3 text-slate-700 hover:text-teal-700 font-medium transition-all duration-300 rounded-xl hover:shadow-md border-l-4 border-teal-500 bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 shadow-sm"
+                  key={i}
+                  onClick={() => setMobileNav("hidden")}
+                >
+                  <span className="flex items-center">
+                    {item.icon && <span className="mr-2">{item.icon}</span>}
+                    {item.title}
+                  </span>
+                </a>
+              ))
+            ) : (
+              // Regular users see all links
+              displayLinks.map((item, i) => (
+                <a
+                  href={item.link}
+                  className={`block mx-3 sm:mx-4 px-3 sm:px-4 py-3 text-slate-700 hover:text-teal-700 font-medium transition-all duration-300 rounded-xl hover:shadow-md ${
+                    item.title === "Profile" || item.title === "Dashboard" 
+                      ? "border-l-4 border-teal-500 bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 shadow-sm" 
+                      : "hover:bg-gradient-to-r hover:from-teal-50 hover:to-emerald-50"
+                  }`}
+                  key={i}
+                  onClick={() => setMobileNav("hidden")}
+                >
+                  <span className="flex items-center">
+                    {item.icon && <span className="mr-2">{item.icon}</span>}
+                    {item.title === "Profile" && !item.icon && "👤 "}
+                    {item.title === "Dashboard" && !item.icon && "📊 "}
+                    {item.title}
+                  </span>
+                </a>
+              ))
+            )}
           </div>
           
           {/* Mobile Auth Buttons */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-r from-slate-100 via-teal-50 to-emerald-50 border-t-2 border-teal-200/50 rounded-br-3xl">
+          <div className="p-4 sm:p-6 bg-gradient-to-r from-slate-100 via-teal-50 to-emerald-50 border-t-2 border-teal-200/50 rounded-br-3xl">
             {!isLoggedIn ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <a 
                   href="/start-fundraiser"
-                  className="block text-center bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white px-6 py-3 font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-emerald-500/30 hover:scale-105"
+                  className="block text-center bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white px-4 sm:px-6 py-3 font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-emerald-500/30 hover:scale-105 text-sm"
                   onClick={() => setMobileNav("hidden")}
                 >
                   🚀 Start Fundraiser
                 </a>
                 <a 
                   href="/login"
-                  className="block text-center text-teal-700 px-4 py-3 font-medium border-2 border-teal-500 rounded-xl hover:bg-teal-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="block text-center text-teal-700 px-4 py-3 font-medium border-2 border-teal-500 rounded-xl hover:bg-teal-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md text-sm"
                   onClick={() => setMobileNav("hidden")}
                 >
                   Login
                 </a>
                 <a 
-                  href="/signup"
-                  className="block text-center text-slate-600 px-4 py-3 font-medium border-2 border-slate-400 rounded-xl hover:bg-slate-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
+                  href="/register"
+                  className="block text-center text-slate-600 px-4 py-3 font-medium border-2 border-slate-400 rounded-xl hover:bg-slate-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md text-sm"
                   onClick={() => setMobileNav("hidden")}
                 >
                   Signup
                 </a>
               </div>
             ) : (
-              <button 
-                onClick={() => {
-                  handleLogout();
-                  setMobileNav("hidden");
-                }}
-                className="w-full text-center text-red-600 px-4 py-3 font-medium border-2 border-red-400 rounded-xl hover:bg-red-50 transition-all duration-300 shadow-sm hover:shadow-md"
-              >
-                Logout
-              </button>
+              <div className="space-y-3">
+                <a 
+                  href="/start-fundraiser"
+                  className="block text-center bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white px-4 sm:px-6 py-3 font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-emerald-500/30 hover:scale-105 text-sm"
+                  onClick={() => setMobileNav("hidden")}
+                >
+                  🚀 Start Fundraiser
+                </a>
+                <button 
+                  onClick={() => {
+                    handleLogout();
+                    setMobileNav("hidden");
+                  }}
+                  className="w-full text-center text-red-600 px-4 py-3 font-medium border-2 border-red-400 rounded-xl hover:bg-red-50 transition-all duration-300 shadow-sm hover:shadow-md text-sm flex items-center justify-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
             )}
           </div>
         </div>
