@@ -23,6 +23,7 @@ import Users from './pages/Users';
 import Campaigns from './pages/Campaigns';
 import Raised from './pages/Raised';
 import Causes from './pages/Causes';
+import AdminWithdrawals from './pages/AdminWithdrawals';
 
 function App() {
 
@@ -151,6 +152,7 @@ function App() {
         <Route path= "/admin/users" element = {<Users/>}/>
         <Route path= "/admin/raised" element = {<Raised/>}/>
         <Route path= "/admin/causes" element = {<Causes/>}/>
+        <Route path= "/admin/withdrawals" element = {<AdminWithdrawals/>}/>
       </Routes>
       <Footer/>
     </div>

@@ -412,9 +412,20 @@ const Dashboard = () => {
       <div onClick={() => window.location.href = '/admin/campaigns?status=pending_review'} className="cursor-pointer">
         <StatCard icon={Clock} title="Pending Review" value={adminStats?.pendingCampaigns || 0} color="yellow" loading={!adminStats} />
       </div>
-      <div onClick={() => window.location.href = '/admin/raised'} className="cursor-pointer">
-        <StatCard icon={DollarSign} title="Total Raised" value={adminStats ? `₹${(adminStats.totalRaised / 1000000).toFixed(1)}M` : '₹0'} color="cyan" loading={!adminStats} />
-      </div>
+      <StatCard 
+  icon={DollarSign}
+  title="Total Raised"
+  value={
+    adminStats
+      ? adminStats.totalRaised >= 1_000_000
+        ? `₹${(adminStats.totalRaised / 1_000_000).toFixed(1)}M`
+        : `₹${adminStats.totalRaised.toLocaleString()}`
+      : '₹0'
+  }
+  color="cyan"
+  loading={!adminStats}
+/>
+
       <div onClick={() => window.location.href = '/admin/causes'} className="cursor-pointer">
         <StatCard icon={Activity} title="Active Causes" value={adminStats?.totalCauses || 0} color="teal" loading={!adminStats} />
       </div>
@@ -507,15 +518,8 @@ const Dashboard = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-gray-900">Campaigns Pending Review</h2>
-          <div className="flex items-center gap-2">
-            <button className="p-2 hover:bg-gray-100 rounded-lg">
-              <Filter className="h-4 w-4 text-gray-500" />
-            </button>
-            <button className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-colors text-sm">
-              <Download className="h-4 w-4" />
-              Export
-            </button>
-          </div>
+
+
         </div>
         {pendingCampaigns.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
@@ -629,13 +633,13 @@ const Dashboard = () => {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
                 {user?.role === 'admin' ? 'Admin Dashboard' : 'Dashboard'}
               </h1>
-              <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+              {/* <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                 user?.role === 'admin' 
                   ? 'bg-purple-100 text-purple-700' 
                   : 'bg-teal-100 text-teal-700'
               }`}>
                 {user?.role || 'user'}
-              </span>
+              </span> */}
             </div>
             <div className="flex items-center gap-4">
               <button className="p-2 hover:bg-gray-100 rounded-lg relative">
