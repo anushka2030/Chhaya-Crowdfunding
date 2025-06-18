@@ -2,7 +2,14 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const adminMiddleware = async (req, res, next) => {
-  const token = req.header('x-auth-token');
+
+   let token;
+   const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else if (req.header('x-auth-token')) {
+    token = req.header('x-auth-token');
+  }
   if (!token) return res.status(401).json({ msg: 'No token, auth denied' });
 
   try {

@@ -188,21 +188,24 @@ router.delete('/delete-campaigns/:id', adminMiddleware, async (req, res) => {
   }
 });
 
-// Get withdrawal requests
+//get withdrawal requests
 router.get('/withdrawals', adminMiddleware, async (req, res) => {
   try {
     const { status = 'pending', page = 1, limit = 10 } = req.query;
-    
+
+    console.log("➡️ [ADMIN] Fetching withdrawals with status:", status);
+
     const campaigns = await Campaign.find({
-      'withdrawals.status': status
+      withdrawals: { $elemMatch: { status } }
     })
     .populate('creator', 'name email')
     .populate('cause', 'name')
     .sort({ 'withdrawals.requestedAt': -1 })
     .limit(limit * 1)
     .skip((page - 1) * limit);
-    
-    // Extract withdrawal requests
+
+    console.log("✅ [ADMIN] Campaigns fetched:", campaigns.length);
+
     const withdrawals = [];
     campaigns.forEach(campaign => {
       campaign.withdrawals
@@ -217,7 +220,7 @@ router.get('/withdrawals', adminMiddleware, async (req, res) => {
           });
         });
     });
-    
+
     res.json({
       withdrawals,
       pagination: {
@@ -227,10 +230,11 @@ router.get('/withdrawals', adminMiddleware, async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Error fetching withdrawals:', err);
+    console.error('❌ Error fetching withdrawals:', err);
     res.status(500).json({ msg: 'Server error', error: err.message });
   }
 });
+
 
 // Process withdrawal request
 router.patch('/withdrawals/:campaignId/:withdrawalId', adminMiddleware, async (req, res) => {

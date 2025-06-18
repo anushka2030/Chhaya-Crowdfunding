@@ -412,7 +412,8 @@ const Dashboard = () => {
       <div onClick={() => window.location.href = '/admin/campaigns?status=pending_review'} className="cursor-pointer">
         <StatCard icon={Clock} title="Pending Review" value={adminStats?.pendingCampaigns || 0} color="yellow" loading={!adminStats} />
       </div>
-      <StatCard 
+      <div onClick = {()=>window.location.href = '/admin/raised'} className = "cursor-pointer">
+             <StatCard 
   icon={DollarSign}
   title="Total Raised"
   value={
@@ -425,6 +426,8 @@ const Dashboard = () => {
   color="cyan"
   loading={!adminStats}
 />
+      </div>
+ 
 
       <div onClick={() => window.location.href = '/admin/causes'} className="cursor-pointer">
         <StatCard icon={Activity} title="Active Causes" value={adminStats?.totalCauses || 0} color="teal" loading={!adminStats} />
