@@ -26,6 +26,7 @@ import Causes from './pages/Causes';
 import AdminWithdrawals from './pages/AdminWithdrawals';
 import UpdateCampaign from './pages/UpdateCampaign';
 import MyCampaignDetails from './pages/MyCampaignDetails';
+import UserProfile from './pages/UserProfile';
 
 
 function App() {
@@ -158,6 +159,7 @@ function App() {
         <Route path= "/admin/withdrawals" element = {<AdminWithdrawals/>}/>
         <Route path="/update-campaign/:id" element={<UpdateCampaign />} />
         <Route path="/my-campaign/:id" element={<MyCampaignDetails/>} />
+        <Route path="/profile" element={<UserProfile />} />
       </Routes>
       <Footer/>
     </div>
