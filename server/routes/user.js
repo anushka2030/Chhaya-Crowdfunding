@@ -106,6 +106,77 @@ router.post('/upload-avatar', protect, upload.single('avatar'), async (req, res)
     res.status(500).json({ message: 'Server error' });
   }
 });
+router.get('/my-donations', protect, async (req, res) => {
+  try {
+    const campaigns = await Campaign.find({ 'donations.donor': req.user.id })
+      .populate('donations.donor', 'name profilePicture')
+      .populate('cause', 'name');
+
+    const userDonations = [];
+
+    campaigns.forEach(campaign => {
+      campaign.donations.forEach(donation => {
+        if (donation.donor._id.toString() === req.user.id) {
+          userDonations.push({
+            campaignId: campaign._id,
+            campaignTitle: campaign.title,
+            cause: campaign.cause.name,
+            amount: donation.amount,
+            message: donation.message,
+            isAnonymous: donation.isAnonymous,
+            date: donation.date
+          });
+        }
+      });
+    });
+
+    res.json(userDonations);
+  } catch (error) {
+    console.error('Error fetching user donations:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get('/my-total-raised', protect, async (req, res) => {
+  try {
+    const campaigns = await Campaign.find({ creator: req.user.id });
+    const totalRaised = campaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
+    res.json({ totalRaised, campaigns });
+  } catch (error) {
+    console.error('Error fetching total raised:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get('/my-withdrawals', protect, async (req, res) => {
+  try {
+    const campaigns = await Campaign.find({ 
+      creator: req.user.id,
+      $or: [
+        { status: 'completed' },
+        { withdrawals: { $exists: true, $not: { $size: 0 } } },
+        { status: 'rejected' }
+      ]
+    }).select('title status withdrawals raisedAmount');
+
+    const withdrawals = campaigns.flatMap(c => 
+      c.withdrawals.map(w => ({
+        campaignId: c._id,
+        campaignTitle: c.title,
+        status: c.status,
+        amount: w.amount,
+        bankDetails: w.bankDetails,
+        requestedAt: w.createdAt
+      }))
+    );
+
+    res.json(withdrawals);
+  } catch (err) {
+    console.error('Error fetching withdrawals:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 
 
 module.exports = router;

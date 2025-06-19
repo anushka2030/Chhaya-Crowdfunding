@@ -109,13 +109,13 @@ const Header = () => {
                   </a>
                   <a 
                     href="/login"
-                    className="text-teal-200 hover:text-white px-4 py-2.5 text-sm font-medium border-2 border-teal-400/60 hover:border-teal-300 rounded-xl hover:bg-teal-700/30 transition-all duration-300 backdrop-blur-sm hover:shadow-lg"
+                    className="text-teal-200 hover:text-white px-4 py-2.5 text-sm font-medium"
                   >
                     Login
                   </a>
                   <a 
                     href="/register"
-                    className="text-slate-200 hover:text-white px-4 py-2.5 text-sm font-medium border-2 border-slate-400/60 hover:border-slate-300 rounded-xl hover:bg-slate-700/30 transition-all duration-300 backdrop-blur-sm hover:shadow-lg"
+                    className="text-teal-200 hover:text-white px-4 py-2.5 text-sm font-medium"
                   >
                     Signup
                   </a>
@@ -127,10 +127,10 @@ const Header = () => {
                   {authenticatedLinks.map((item, i) => (
                     <a
                       href={item.link}
-                      className="text-white hover:text-teal-200 border-2 border-teal-400/60 hover:border-teal-300 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-teal-700/30 hover:shadow-lg backdrop-blur-sm flex items-center gap-2"
+                      className="text-white hover:text-teal-200 px-4 py-2 text-sm font-medium transition-all duration-300"
                       key={`auth-${i}`}
                     >
-                      {item.icon && <span>{item.icon}</span>}
+                      {/* {item.icon && <span>{item.icon}</span>} */}
                       {item.title}
                     </a>
                   ))}
@@ -144,10 +144,11 @@ const Header = () => {
                   
                   <button 
                     onClick={handleLogout}
-                    className="text-red-200 hover:text-white px-4 py-2.5 text-sm font-medium border-2 border-red-400/60 hover:border-red-300 rounded-2xl hover:bg-red-600/30 transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-red-500/20 flex items-center gap-2"
+                    className="text-red-200 hover:text-white px-4 py-2.5 text-sm font-medium "
                   >
+                    
+                    Log Out
                     <LogOut className="w-4 h-4" />
-                    Logout
                   </button>
                 </div>
               )}
