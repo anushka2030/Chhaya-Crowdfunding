@@ -61,12 +61,12 @@ const FAQPage = () => {
       question: 'Are donations tax-deductible?',
       answer: 'Donations to registered NGOs and charitable organizations are eligible for tax deduction under Section 80G. You will receive a tax receipt for eligible donations. Personal campaigns are not eligible for tax benefits.'
     },
-    {
-      id: 10,
-      category: 'tax',
-      question: 'How do I get my tax receipt?',
-      answer: 'Tax receipts are automatically generated for eligible donations and sent to your registered email address within 48 hours. You can also download them from your donor dashboard.'
-    },
+    // {
+    //   id: 10,
+    //   category: 'tax',
+    //   question: 'How do I get my tax receipt?',
+    //   answer: 'Tax receipts are automatically generated for eligible donations and sent to your registered email address within 48 hours. You can also download them from your donor dashboard.'
+    // },
     {
       id: 11,
       category: 'support',
@@ -87,7 +87,7 @@ const FAQPage = () => {
     { id: 'payments', name: 'Payments & Fees', icon: Phone },
     { id: 'campaigns', name: 'Campaign Management', icon: HelpCircle },
     { id: 'donations', name: 'Donations', icon: Mail },
-    { id: 'tax', name: 'Tax & Receipts', icon: MessageCircle },
+    // { id: 'tax', name: 'Tax & Receipts', icon: MessageCircle },
     { id: 'support', name: 'Support & Tips', icon: Phone }
   ];
 

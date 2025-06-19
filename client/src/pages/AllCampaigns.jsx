@@ -132,11 +132,11 @@ const AllCampaigns = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-100 to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-[#077A7D] to-[#06202B]">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl lg:text-5xl font-light text-[#06202B] mb-4 tracking-tight">All Campaigns</h1>
+          <h1 className="text-4xl lg:text-5xl font-light text-white mb-4 tracking-tight">All Campaigns</h1>
           <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto">Discover meaningful causes and make a difference in someone's life</p>
         </div>
 

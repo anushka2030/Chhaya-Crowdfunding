@@ -645,10 +645,10 @@ const Dashboard = () => {
               </span> */}
             </div>
             <div className="flex items-center gap-4">
-              <button className="p-2 hover:bg-gray-100 rounded-lg relative">
+              {/* <button className="p-2 hover:bg-gray-100 rounded-lg relative">
                 <Bell className="h-5 w-5 text-gray-600" />
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-              </button>
+              </button> */}
               <div className="flex items-center gap-3">
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>

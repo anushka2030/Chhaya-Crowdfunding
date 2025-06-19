@@ -10,6 +10,7 @@ router.get('/get-causes', async (req, res) => {
     const causes = await Cause.find({ isActive: true })
       .populate({
         path: 'campaigns',
+        match : {status: 'active'},
         populate: {
           path: 'creator',
           select: 'name profilePicture location isVerified'

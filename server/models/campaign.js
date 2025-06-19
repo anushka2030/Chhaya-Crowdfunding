@@ -62,7 +62,7 @@ const campaignSchema = new mongoose.Schema({
     },
     relationship: {
       type: String,
-      enum: ['self', 'family', 'friend', 'organization', 'community'],
+      enum: ['self', 'family', 'friend', 'organization', 'community','relative'],
       required: true
     },
     age: Number,
