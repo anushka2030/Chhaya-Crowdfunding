@@ -24,6 +24,9 @@ import Campaigns from './pages/Campaigns';
 import Raised from './pages/Raised';
 import Causes from './pages/Causes';
 import AdminWithdrawals from './pages/AdminWithdrawals';
+import UpdateCampaign from './pages/UpdateCampaign';
+import MyCampaignDetails from './pages/MyCampaignDetails';
+
 
 function App() {
 
@@ -153,6 +156,8 @@ function App() {
         <Route path= "/admin/raised" element = {<Raised/>}/>
         <Route path= "/admin/causes" element = {<Causes/>}/>
         <Route path= "/admin/withdrawals" element = {<AdminWithdrawals/>}/>
+        <Route path="/update-campaign/:id" element={<UpdateCampaign />} />
+        <Route path="/my-campaign/:id" element={<MyCampaignDetails/>} />
       </Routes>
       <Footer/>
     </div>

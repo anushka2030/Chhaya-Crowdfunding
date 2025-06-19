@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   User, 
@@ -20,10 +21,14 @@ import {
   Filter,
   Search,
   MoreVertical,
-  Loader2
+  Loader2,
+  X,
+  Camera
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+    const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
   const [adminStats, setAdminStats] = useState(null);
@@ -32,6 +37,24 @@ const Dashboard = () => {
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Modal states
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showCampaignsModal, setShowCampaignsModal] = useState(false);
+  const [showDonationsModal, setShowDonationsModal] = useState(false);
+  const [showSupportedModal, setShowSupportedModal] = useState(false);
+  const [showRaisedModal, setShowRaisedModal] = useState(false);
+  const [showWithdrawalsModal, setShowWithdrawalsModal] = useState(false);
+  
+  // Modal data
+  const [userCampaigns, setUserCampaigns] = useState([]);
+  const [userDonations, setUserDonations] = useState([]);
+  const [supportedCampaigns, setSupportedCampaigns] = useState([]);
+  const [raisedData, setRaisedData] = useState([]);
+  const [withdrawalData, setWithdrawalData] = useState([]);
+  
+  // Upload state
+  const [uploading, setUploading] = useState(false);
 
   // Get auth token from localStorage
   const getAuthToken = () => {
@@ -128,6 +151,106 @@ const Dashboard = () => {
     }
   };
 
+  // Fetch detailed user campaigns for modal
+  const fetchDetailedCampaigns = async () => {
+    try {
+      const campaignsData = await apiCall('/campaign/user/my-campaigns');
+      setUserCampaigns(campaignsData);
+    } catch (err) {
+      console.error('Failed to fetch detailed campaigns:', err);
+    }
+  };
+
+  // Fetch user donations
+  const fetchUserDonations = async () => {
+    try {
+      const donationsData = await apiCall('/user/my-donations');
+      setUserDonations(donationsData);
+    } catch (err) {
+      console.error('Failed to fetch user donations:', err);
+    }
+  };
+
+  // Fetch supported campaigns (campaigns user donated to)
+  const fetchSupportedCampaigns = async () => {
+    try {
+      const donationsData = await apiCall('/user/my-donations');
+      // Group by campaign
+      const campaignMap = new Map();
+      donationsData.forEach(donation => {
+        if (!campaignMap.has(donation.campaignId)) {
+          campaignMap.set(donation.campaignId, {
+            id: donation.campaignId,
+            title: donation.campaignTitle,
+            cause: donation.cause,
+            totalDonated: 0,
+            donationCount: 0
+          });
+        }
+        const campaign = campaignMap.get(donation.campaignId);
+        campaign.totalDonated += donation.amount;
+        campaign.donationCount += 1;
+      });
+      setSupportedCampaigns(Array.from(campaignMap.values()));
+    } catch (err) {
+      console.error('Failed to fetch supported campaigns:', err);
+    }
+  };
+
+  // Fetch raised data
+  const fetchRaisedData = async () => {
+    try {
+      const data = await apiCall('/user/my-total-raised');
+      setRaisedData(data.campaigns || []);
+    } catch (err) {
+      console.error('Failed to fetch raised data:', err);
+    }
+  };
+
+  // Fetch withdrawal data
+  const fetchWithdrawalData = async () => {
+    try {
+      const data = await apiCall('/user/my-withdrawals');
+      setWithdrawalData(data);
+    } catch (err) {
+      console.error('Failed to fetch withdrawal data:', err);
+    }
+  };
+
+  // Handle avatar upload
+  const handleAvatarUpload = async (file) => {
+    if (!file) return;
+    
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/user/upload-avatar`, {
+        method: 'POST',
+        headers: {
+          'x-auth-token': getAuthToken()
+        },
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Upload failed');
+      }
+      
+      // Update user profile picture
+      setUser(prev => ({ ...prev, profilePicture: data.profilePicture }));
+      setShowAvatarModal(false);
+      
+    } catch (err) {
+      alert(`Upload failed: ${err.message}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   // Handle campaign approval
   const handleCampaignApproval = async (campaignId, action, notes = '') => {
     try {
@@ -149,7 +272,7 @@ const Dashboard = () => {
     if (!window.confirm('Are you sure you want to delete this campaign?')) return;
     
     try {
-      await apiCall(`/admin/delete-campaigns/${campaignId}`, {
+      await apiCall(`/campaign/${campaignId}`, {
         method: 'DELETE'
       });
       
@@ -201,8 +324,11 @@ const Dashboard = () => {
     fetchRoleData();
   }, [user]);
 
-  const StatCard = ({ icon: Icon, title, value, change, color = 'teal', loading = false }) => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+  const StatCard = ({ icon: Icon, title, value, change, color = 'teal', loading = false, onClick }) => (
+    <div 
+      className={`bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
@@ -231,7 +357,7 @@ const Dashboard = () => {
 
   const CampaignCard = ({ campaign, showActions = false, isAdmin = false }) => {
     const progress = campaign.goalAmount > 0 ? (campaign.raisedAmount / campaign.goalAmount) * 100 : 0;
-    
+  
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
         <div className="flex items-start justify-between mb-4">
@@ -259,12 +385,16 @@ const Dashboard = () => {
             <div className="flex items-center gap-1 ml-4">
               <button 
                 className="p-2 hover:bg-gray-100 rounded-lg"
-                onClick={() => window.open(`/campaign/${campaign._id}`, '_blank')}
+               onClick={() => navigate(`/my-campaign/${campaign._id}`)}
+
               >
                 <Eye className="h-4 w-4 text-gray-500" />
               </button>
               {!isAdmin && (
-                <button className="p-2 hover:bg-gray-100 rounded-lg">
+                <button 
+                  className="p-2 hover:bg-gray-100 rounded-lg"
+                  onClick={() => window.location.href = `/update-campaign/${campaign._id}`}
+                >
                   <Edit className="h-4 w-4 text-gray-500" />
                 </button>
               )}
@@ -295,6 +425,7 @@ const Dashboard = () => {
               campaign.status === 'active' ? 'bg-green-100 text-green-700' :
               campaign.status === 'pending_review' ? 'bg-yellow-100 text-yellow-700' :
               campaign.status === 'rejected' ? 'bg-red-100 text-red-700' :
+              campaign.status === 'completed' ? 'bg-blue-100 text-blue-700' :
               'bg-gray-100 text-gray-700'
             }`}>
               {campaign.status?.replace('_', ' ') || 'Unknown'}
@@ -305,96 +436,396 @@ const Dashboard = () => {
     );
   };
 
-  const UserDashboard = () => (
-    <div className="space-y-6">
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          icon={Heart} 
-          title="Campaigns Created" 
-          value={user?.stats?.campaignsCreated || 0} 
-          color="teal"
-        />
-        <StatCard 
-          icon={DollarSign} 
-          title="Total Donated" 
-          value={`₹${(user?.stats?.totalDonated || 0).toLocaleString()}`} 
-          color="cyan"
-        />
-        <StatCard 
-          icon={Users} 
-          title="Campaigns Supported" 
-          value={user?.stats?.campaignsSupported || 0} 
-          color="teal"
-        />
-        <StatCard 
-          icon={TrendingUp} 
-          title="Total Raised" 
-          value={`₹${(user?.stats?.totalRaised || 0).toLocaleString()}`} 
-          color="cyan"
-        />
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-        <div className="flex flex-wrap gap-4">
-          <button 
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-colors"
-            onClick={() => window.location.href = '/create-campaign'}
-          >
-            <Plus className="h-4 w-4" />
-            Create Campaign
-          </button>
-          <button 
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-            onClick={() => window.location.href = '/campaigns'}
-          >
-            <Search className="h-4 w-4" />
-            Browse Campaigns
-          </button>
-          <button 
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-            onClick={() => window.location.href = '/profile/settings'}
-          >
-            <Settings className="h-4 w-4" />
-            Account Settings
+  // Modal Components
+  const AvatarModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+      <div className="bg-white rounded-lg p-6 w-96">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Update Profile Picture</h3>
+          <button onClick={() => setShowAvatarModal(false)}>
+            <X className="h-5 w-5" />
           </button>
         </div>
-      </div>
-
-      {/* My Campaigns */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">My Campaigns</h2>
-          <button 
-            className="text-teal-600 hover:text-teal-700 text-sm font-medium"
-            onClick={() => window.location.href = '/my-campaigns'}
-          >
-            View All
-          </button>
+        <div className="mb-4">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleAvatarUpload(e.target.files[0])}
+            className="w-full p-2 border rounded"
+            disabled={uploading}
+          />
         </div>
-        {campaigns.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p>No campaigns created yet</p>
-            <button 
-              className="mt-2 text-teal-600 hover:text-teal-700 font-medium"
-              onClick={() => window.location.href = '/create-campaign'}
-            >
-              Create your first campaign
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {campaigns.slice(0, 4).map(campaign => (
-              <CampaignCard key={campaign._id} campaign={campaign} showActions={true} />
-            ))}
+        {uploading && (
+          <div className="flex items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span className="ml-2">Uploading...</span>
           </div>
         )}
       </div>
     </div>
   );
+
+  const CampaignsModal = () => (
+    
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+      <div className="bg-white rounded-lg p-6 w-4/5 max-w-6xl max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">My Campaigns</h3>
+          <button onClick={() => setShowCampaignsModal(false)}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-3">Title</th>
+                <th className="text-left p-3">Status</th>
+                <th className="text-left p-3">Goal</th>
+                <th className="text-left p-3">Raised</th>
+                <th className="text-left p-3">Created</th>
+                <th className="text-left p-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userCampaigns.map(campaign => (
+                <tr key={campaign._id} className="border-b hover:bg-gray-50">
+                  <td className="p-3">{campaign.title}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      campaign.status === 'active' ? 'bg-green-100 text-green-700' :
+                      campaign.status === 'pending_review' ? 'bg-yellow-100 text-yellow-700' :
+                      campaign.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                      campaign.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {campaign.status?.replace('_', ' ')}
+                    </span>
+                  </td>
+                  <td className="p-3">₹{campaign.goalAmount?.toLocaleString()}</td>
+                  <td className="p-3">₹{campaign.raisedAmount?.toLocaleString()}</td>
+                  <td className="p-3">{new Date(campaign.createdAt).toLocaleDateString()}</td>
+                  <td className="p-3">
+                    <div className="flex gap-1">
+                      <button 
+                        className="p-1 hover:bg-gray-100 rounded"
+                        onClick={() =>  navigate(`/my-campaign/${campaign._id}`)}
+                      >
+                        <Eye className="h-4 w-4 text-gray-500" />
+                      </button>
+                      <button 
+                        className="p-1 hover:bg-gray-100 rounded"
+                        onClick={() => window.location.href = `/update-campaign/${campaign._id}`}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button 
+                        className="p-1 hover:bg-red-100 rounded"
+                        onClick={() => handleDeleteCampaign(campaign._id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const DonationsModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+      <div className="bg-white rounded-lg p-6 w-4/5 max-w-6xl max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">My Donations</h3>
+          <button onClick={() => setShowDonationsModal(false)}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-3">Campaign</th>
+                <th className="text-left p-3">Cause</th>
+                <th className="text-left p-3">Amount</th>
+                <th className="text-left p-3">Date</th>
+                <th className="text-left p-3">Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userDonations.map((donation, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="p-3">
+                    <button 
+                      className="text-blue-600 hover:underline"
+                      onClick={() => window.open(`/campaign/${donation.campaignId}`, '_blank')}
+                    >
+                      {donation.campaignTitle}
+                    </button>
+                  </td>
+                  <td className="p-3">{donation.cause}</td>
+                  <td className="p-3">₹{donation.amount.toLocaleString()}</td>
+                  <td className="p-3">{new Date(donation.date).toLocaleDateString()}</td>
+                  <td className="p-3">{donation.message || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const SupportedModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+      <div className="bg-white rounded-lg p-6 w-4/5 max-w-4xl max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Campaigns Supported</h3>
+          <button onClick={() => setShowSupportedModal(false)}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="grid gap-4">
+          {supportedCampaigns.map(campaign => (
+            <div key={campaign.id} className="border rounded-lg p-4 hover:bg-gray-50">
+              <div className="flex justify-between items-center">
+                <div>
+                  <button 
+                    className="text-lg font-medium text-blue-600 hover:underline"
+                    onClick={() => window.location.href = `/campaign/${campaign.id}`}
+
+                  >
+                    {campaign.title}
+                  </button>
+                  <p className="text-sm text-gray-600">{campaign.cause}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">₹{campaign.totalDonated.toLocaleString()}</p>
+                  <p className="text-sm text-gray-600">{campaign.donationCount} donation{campaign.donationCount !== 1 ? 's' : ''}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const RaisedModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+      <div className="bg-white rounded-lg p-6 w-4/5 max-w-6xl max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Money Raised by Campaign</h3>
+          <button onClick={() => setShowRaisedModal(false)}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-3">Campaign</th>
+                <th className="text-left p-3">Status</th>
+                <th className="text-left p-3">Goal</th>
+                <th className="text-left p-3">Raised</th>
+                <th className="text-left p-3">Progress</th>
+              </tr>
+            </thead>
+            <tbody>
+              {raisedData.map(campaign => (
+                <tr key={campaign._id} className="border-b hover:bg-gray-50">
+                  <td className="p-3">{campaign.title}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      campaign.status === 'active' ? 'bg-green-100 text-green-700' :
+                      campaign.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {campaign.status}
+                    </span>
+                  </td>
+                  <td className="p-3">₹{campaign.goalAmount?.toLocaleString()}</td>
+                  <td className="p-3">₹{campaign.raisedAmount?.toLocaleString()}</td>
+                  <td className="p-3">
+                    {campaign.goalAmount > 0 ? ((campaign.raisedAmount / campaign.goalAmount) * 100).toFixed(1) : 0}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const WithdrawalsModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+      <div className="bg-white rounded-lg p-6 w-4/5 max-w-6xl max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Withdrawal History</h3>
+          <button onClick={() => setShowWithdrawalsModal(false)}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-3">Campaign</th>
+                <th className="text-left p-3">Amount</th>
+                <th className="text-left p-3">Status</th>
+                <th className="text-left p-3">Account</th>
+                <th className="text-left p-3">Requested</th>
+              </tr>
+            </thead>
+            <tbody>
+              {withdrawalData.map((withdrawal, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="p-3">{withdrawal.campaignTitle}</td>
+                  <td className="p-3">₹{withdrawal.amount?.toLocaleString()}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      withdrawal.status === 'completed' ? 'bg-green-100 text-green-700' :
+                      withdrawal.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {withdrawal.status}
+                    </span>
+                  </td>
+                  <td className="p-3">{withdrawal.bankDetails?.accountNumber ? `****${withdrawal.bankDetails.accountNumber.slice(-4)}` : '-'}</td>
+                  <td className="p-3">{new Date(withdrawal.requestedAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+ const UserDashboard = () => (
+  <div className="space-y-6">
+    {/* Stats Overview */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <StatCard 
+        icon={Heart} 
+        title="Campaigns Created" 
+        value={user?.stats?.campaignsCreated || 0} 
+        color="teal"
+        onClick={() => {
+          fetchDetailedCampaigns();
+          setShowCampaignsModal(true);
+        }}
+      />
+      <StatCard 
+        icon={DollarSign} 
+        title="Total Donated" 
+        value={`₹${(user?.stats?.totalDonated || 0).toLocaleString()}`} 
+        color="cyan"
+        onClick={() => {
+          fetchUserDonations();
+          setShowDonationsModal(true);
+        }}
+      />
+      <StatCard 
+        icon={Users} 
+        title="Campaigns Supported" 
+        value={supportedCampaigns.length || 0} 
+        color="blue"
+        onClick={() => {
+          fetchSupportedCampaigns();
+          setShowSupportedModal(true);
+        }}
+      />
+      <StatCard 
+        icon={TrendingUp} 
+        title="Total Raised" 
+        value={`₹${raisedData.reduce((sum, c) => sum + (c.raisedAmount || 0), 0).toLocaleString()}`} 
+        color="violet"
+        onClick={() => {
+          fetchRaisedData();
+          setShowRaisedModal(true);
+        }}
+      />
+      <StatCard 
+        icon={Activity} 
+        title="Withdrawals" 
+        value={withdrawalData.length || 0} 
+        color="rose"
+        onClick={() => {
+          fetchWithdrawalData();
+          setShowWithdrawalsModal(true);
+        }}
+      />
+    </div>
+
+    {/* Quick Actions */}
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <div className="flex flex-wrap gap-4">
+        <button 
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-colors"
+          onClick={() => window.location.href = '/start-fundraiser'}
+        >
+          <Plus className="h-4 w-4" />
+          Create Campaign
+        </button>
+        <button 
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          onClick={() => window.location.href = '/campaigns'}
+        >
+          <Search className="h-4 w-4" />
+          Browse Campaigns
+        </button>
+        
+      </div>
+    </div>
+
+    {/* My Campaigns Preview */}
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold text-gray-900">My Campaigns</h2>
+        <button 
+          className="text-teal-600 hover:text-teal-700 text-sm font-medium"
+          onClick={() => window.location.href = '/my-campaigns'}
+        >
+          View All
+        </button>
+      </div>
+      {campaigns.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <p>No campaigns created yet</p>
+          <button 
+            className="mt-2 text-teal-600 hover:text-teal-700 font-medium"
+            onClick={() => window.location.href = '/create-campaign'}
+          >
+            Create your first campaign
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {campaigns.slice(0, 4).map(campaign => (
+            <CampaignCard key={campaign._id} campaign={campaign} showActions={true} />
+          ))}
+        </div>
+      )}
+    </div>
+
+    {/* Modals */}
+    {showAvatarModal && <AvatarModal />}
+    {showCampaignsModal && <CampaignsModal />}
+    {showDonationsModal && <DonationsModal />}
+    {showSupportedModal && <SupportedModal />}
+    {showRaisedModal && <RaisedModal />}
+    {showWithdrawalsModal && <WithdrawalsModal />}
+  </div>
+);
+
 
   const AdminDashboard = () => (
      <div className="space-y-6">
