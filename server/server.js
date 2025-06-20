@@ -20,17 +20,18 @@ app.use('/uploads', (req, res, next) => {
   next();
 });
 
-// Static file serving
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-console.log('🟢 Static /uploads route enabled');
-console.log('🟢 Uploads directory path:', path.join(__dirname, 'uploads'));
-
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/campaign', require('./routes/campaign'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/causes', require('./routes/causes'));
+
+
+// Static file serving
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+console.log('🟢 Static /uploads route enabled');
+console.log('🟢 Uploads directory path:', path.join(__dirname, 'uploads'));
 
 // Connect to MongoDB and start server
 mongoose.connect(process.env.MONGO_URI, {

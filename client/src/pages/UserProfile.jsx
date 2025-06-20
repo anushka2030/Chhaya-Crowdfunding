@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Loader2, Camera, Save } from 'lucide-react';
 
 const UserProfile = () => {
+  const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const STATIC_BASE = API_BASE.replace('/api', ''); // Removes "/api"
+
   const [user, setUser] = useState(null);
   const [form, setForm] = useState({});
   const [loading, setLoading] = useState(true);
@@ -147,9 +150,10 @@ const UserProfile = () => {
       <div className="flex items-center gap-4 mb-6">
         <div className="w-20 h-20 rounded-full overflow-hidden border">
           <img
+             key={user?.profilePicture}
             src={
               user?.profilePicture
-                ? `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${user.profilePicture}`
+                ? `${STATIC_BASE}${user.profilePicture}`
                 : '/default-avatar.png'
             }
             alt="Profile"

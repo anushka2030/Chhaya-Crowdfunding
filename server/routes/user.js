@@ -94,7 +94,7 @@ router.post('/upload-avatar', protect, upload.single('avatar'), async (req, res)
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.profilePicture = `/uploads/avatars/${req.file.filename}`;
+    user.profilePicture = `/uploads/${req.file.filename}`;
     await user.save();
 
     res.json({

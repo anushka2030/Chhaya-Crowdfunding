@@ -447,6 +447,16 @@ const Dashboard = () => {
           </button>
         </div>
         <div className="mb-4">
+          <img
+  src={
+    user?.profilePicture
+      ? `${(process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '')}${user.profilePicture}`
+      : '/default-avatar.png'
+  }
+  alt="User Avatar"
+  className="w-10 h-10 rounded-full object-cover"
+/>
+
           <input
             type="file"
             accept="image/*"
