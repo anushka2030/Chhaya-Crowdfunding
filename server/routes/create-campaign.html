@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Campaign Creation</title>
+</head>
+<body>
+    <h1>Test Campaign Creation Form</h1>
+    
+    <div id="debug-info">
+        <h3>Debug Information:</h3>
+        <div id="debug-output"></div>
+    </div>
+    
+    <div id="error-info" style="color: red; display: none;">
+        <h3>Error Information:</h3>
+        <div id="error-output"></div>
+    </div>
+    
+    <div id="success-info" style="color: green; display: none;">
+        <h3>Success:</h3>
+        <div id="success-output"></div>
+    </div>
+
+    <form id="campaignForm" enctype="multipart/form-data">
+        <h3>Required Fields:</h3>
+        
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" required><br><br>
+        
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
+        
+        <label for="cause">Cause ID:</label><br>
+        <input type="text" id="cause" name="cause" placeholder="Enter valid cause ObjectId" required><br><br>
+        
+        <label for="goalAmount">Goal Amount:</label><br>
+        <input type="number" id="goalAmount" name="goalAmount" step="0.01" required><br><br>
+        
+        <label for="endDate">End Date:</label><br>
+        <input type="datetime-local" id="endDate" name="endDate" required><br><br>
+        
+        <label for="beneficiaryName">Beneficiary Name:</label><br>
+        <input type="text" id="beneficiaryName" name="beneficiaryName" required><br><br>
+        
+        <label for="beneficiaryRelationship">Beneficiary Relationship:</label><br>
+        <input type="text" id="beneficiaryRelationship" name="beneficiaryRelationship" required><br><br>
+        
+        <label for="country">Country:</label><br>
+        <input type="text" id="country" name="country" required><br><br>
+        
+        <label for="state">State:</label><br>
+        <input type="text" id="state" name="state" required><br><br>
+        
+        <label for="city">City:</label><br>
+        <input type="text" id="city" name="city" required><br><br>
+
+        <h3>Optional Fields:</h3>
+        
+        <label for="beneficiaryAge">Beneficiary Age:</label><br>
+        <input type="number" id="beneficiaryAge" name="beneficiaryAge"><br><br>
+        
+        <label for="beneficiaryDetails">Beneficiary Details:</label><br>
+        <textarea id="beneficiaryDetails" name="beneficiaryDetails" rows="3" cols="50"></textarea><br><br>
+        
+        <label for="pincode">Pincode:</label><br>
+        <input type="text" id="pincode" name="pincode"><br><br>
+        
+        <label for="isUrgent">Is Urgent:</label><br>
+        <input type="checkbox" id="isUrgent" name="isUrgent" value="true"><br><br>
+        
+        <label for="tags">Tags (comma separated):</label><br>
+        <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3"><br><br>
+
+        <h3>Images (up to 5):</h3>
+        <label for="images">Select Images:</label><br>
+        <input type="file" id="images" name="images" multiple accept="image/*"><br><br>
+        
+        <div id="image-captions"></div>
+
+        <h3>Authentication:</h3>
+        <label for="authToken">Auth Token (Bearer token):</label><br>
+        <input type="text" id="authToken" name="authToken" placeholder="Enter your JWT token"><br><br>
+        
+        <h3>API Endpoint:</h3>
+        <label for="apiEndpoint">API Endpoint:</label><br>
+        <input type="text" id="apiEndpoint" name="apiEndpoint" value="http://localhost:5000/api/campaign/create" placeholder="Enter API endpoint"><br><br>
+        
+        <button type="submit">Create Campaign</button>
+        <button type="button" onclick="testEndpoint()">Test Endpoint Availability</button>
+    </form>
+
+    <script>
+        const debugOutput = document.getElementById('debug-output');
+        const errorOutput = document.getElementById('error-output');
+        const successOutput = document.getElementById('success-output');
+        const errorInfo = document.getElementById('error-info');
+        const successInfo = document.getElementById('success-info');
+
+        function logDebug(message) {
+            console.log(message);
+            debugOutput.innerHTML += '<div>' + JSON.stringify(message, null, 2) + '</div>';
+        }
+
+        function logError(message) {
+            console.error(message);
+            errorOutput.innerHTML = '<div>' + JSON.stringify(message, null, 2) + '</div>';
+            errorInfo.style.display = 'block';
+            successInfo.style.display = 'none';
+        }
+
+        function logSuccess(message) {
+            console.log(message);
+            successOutput.innerHTML = '<div>' + JSON.stringify(message, null, 2) + '</div>';
+            successInfo.style.display = 'block';
+            errorInfo.style.display = 'none';
+        }
+
+        // Handle image selection to show caption inputs
+        document.getElementById('images').addEventListener('change', function(e) {
+            const captionsDiv = document.getElementById('image-captions');
+            captionsDiv.innerHTML = '';
+            
+            for (let i = 0; i < e.target.files.length; i++) {
+                const file = e.target.files[i];
+                captionsDiv.innerHTML += `
+                    <div>
+                        <label for="imageCaption_${i}">Caption for ${file.name}:</label><br>
+                        <input type="text" id="imageCaption_${i}" name="imageCaption_${i}" placeholder="Optional caption"><br><br>
+                    </div>
+                `;
+            }
+        });
+
+        document.getElementById('campaignForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous outputs
+            debugOutput.innerHTML = '';
+            errorOutput.innerHTML = '';
+            successOutput.innerHTML = '';
+            errorInfo.style.display = 'none';
+            successInfo.style.display = 'none';
+            
+            logDebug('Form submission started');
+            
+            const formData = new FormData();
+            const form = e.target;
+            
+            // Add all form fields to FormData
+            const formElements = form.elements;
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i];
+                
+                if (element.name && element.name !== 'images' && element.name !== 'authToken') {
+                    if (element.type === 'checkbox') {
+                        if (element.checked) {
+                            formData.append(element.name, element.value);
+                        }
+                    } else if (element.value) {
+                        formData.append(element.name, element.value);
+                    }
+                }
+            }
+            
+            // Add images
+            const imageFiles = document.getElementById('images').files;
+            for (let i = 0; i < imageFiles.length; i++) {
+                formData.append('images', imageFiles[i]);
+            }
+            
+            // Debug: Log FormData contents
+            logDebug('FormData contents:');
+            for (let [key, value] of formData.entries()) {
+                if (value instanceof File) {
+                    logDebug(`${key}: File - ${value.name} (${value.size} bytes)`);
+                } else {
+                    logDebug(`${key}: ${value}`);
+                }
+            }
+            
+            const authToken = document.getElementById('authToken').value;
+            
+            if (!authToken) {
+                logError('Auth token is required');
+                return;
+            }
+            
+            try {
+                const apiEndpoint = document.getElementById('apiEndpoint').value;
+                logDebug(`Sending request to ${apiEndpoint}`);
+                
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+                
+                logDebug(`Response status: ${response.status}`);
+                logDebug(`Response headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                const responseText = await response.text();
+                logDebug(`Raw response: ${responseText}`);
+                
+                let responseData;
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (parseError) {
+                    logError(`Failed to parse response as JSON: ${parseError.message}`);
+                    logError(`Raw response: ${responseText}`);
+                    return;
+                }
+                
+                if (response.ok) {
+                    logSuccess('Campaign created successfully!');
+                    logSuccess(responseData);
+                } else {
+                    logError(`Request failed with status ${response.status}`);
+                    logError(responseData);
+                }
+                
+            } catch (error) {
+                logError(`Network error: ${error.message}`);
+                logError(`Full error: ${error.stack}`);
+            }
+        });
+
+        // Set default end date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('endDate').value = tomorrow.toISOString().slice(0, 16);
+        
+        // Test endpoint function
+        async function testEndpoint() {
+            const apiEndpoint = document.getElementById('apiEndpoint').value;
+            const authToken = document.getElementById('authToken').value;
+            
+            logDebug(`Testing endpoint: ${apiEndpoint}`);
+            
+            try {
+                // Test with OPTIONS request first
+                const optionsResponse = await fetch(apiEndpoint, {
+                    method: 'OPTIONS',
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                
+                logDebug(`OPTIONS Response status: ${optionsResponse.status}`);
+                logDebug(`OPTIONS Response headers: ${JSON.stringify([...optionsResponse.headers.entries()])}`);
+                
+                // Test with GET request
+                const getResponse = await fetch(apiEndpoint, {
+                    method: 'GET',
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                
+                logDebug(`GET Response status: ${getResponse.status}`);
+                logDebug(`GET Response headers: ${JSON.stringify([...getResponse.headers.entries()])}`);
+                
+                const getResponseText = await getResponse.text();
+                logDebug(`GET Response body: ${getResponseText}`);
+                
+            } catch (error) {
+                logError(`Endpoint test error: ${error.message}`);
+            }
+        }
+        
+        logDebug('Form initialized');
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin API Tester</title>
+</head>
+<body>
+  <h1>Login as Admin</h1>
+  <input type="email" id="email" placeholder="Email"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
+  <pre id="loginOutput"></pre>
+
+  <hr>
+
+  <h2>Get Users</h2>
+  <button onclick="getUsers()">Fetch Users</button>
+  <pre id="usersOutput"></pre>
+
+  <h2>Delete User</h2>
+  <input type="text" id="deleteUserId" placeholder="User ID">
+  <button onclick="deleteUser()">Delete</button>
+  <pre id="deleteUserOutput"></pre>
+
+  <h2>Get Campaigns</h2>
+  <button onclick="getCampaigns()">Fetch Campaigns</button>
+  <pre id="campaignsOutput"></pre>
+
+  <h2>Approve Campaign</h2>
+  <input type="text" id="approveCampaignId" placeholder="Campaign ID">
+  <button onclick="approveCampaign()">Approve</button>
+  <pre id="approveOutput"></pre>
+
+
+  <hr>
+
+<h2>Reject Campaign</h2>
+<input type="text" id="rejectCampaignId" placeholder="Campaign ID">
+<input type="text" id="rejectNotes" placeholder="Rejection Notes">
+<button onclick="rejectCampaign()">Reject</button>
+<pre id="rejectOutput"></pre>
+
+<h2>Verify User</h2>
+<input type="text" id="verifyUserId" placeholder="User ID">
+<select id="isVerified">
+  <option value="true">Verify</option>
+  <option value="false">Unverify</option>
+</select>
+<button onclick="verifyUser()">Submit</button>
+<pre id="verifyOutput"></pre>
+
+<h2>Get Withdrawal Requests</h2>
+<select id="withdrawalStatus">
+  <option value="pending">Pending</option>
+  <option value="completed">Completed</option>
+  <option value="rejected">Rejected</option>
+</select>
+<button onclick="getWithdrawals()">Fetch</button>
+<pre id="withdrawalOutput"></pre>
+
+<h2>Process Withdrawal Request</h2>
+<input type="text" id="processCampaignId" placeholder="Campaign ID">
+<input type="text" id="processWithdrawalId" placeholder="Withdrawal ID">
+<select id="processStatus">
+  <option value="completed">Complete</option>
+  <option value="rejected">Reject</option>
+</select>
+<input type="text" id="transactionId" placeholder="Transaction ID (optional)">
+<input type="text" id="notes" placeholder="Notes (optional)">
+<button onclick="processWithdrawal()">Process</button>
+<pre id="processOutput"></pre>
+
+<h2>Dashboard Stats</h2>
+<button onclick="getStats()">Fetch Stats</button>
+<pre id="statsOutput"></pre>
+
+  <script>
+    let token = '';
+
+    function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('loginOutput').textContent = JSON.stringify(data, null, 2);
+        if (data.token) {
+          token = data.token;
+        }
+      });
+    }
+
+    function getUsers() {
+      fetch('http://localhost:5000/api/admin/users', {
+        headers: {
+          'x-auth-token': token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('usersOutput').textContent = JSON.stringify(data, null, 2);
+      });
+    }
+
+    function deleteUser() {
+      const userId = document.getElementById('deleteUserId').value;
+      fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'x-auth-token': token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('deleteUserOutput').textContent = JSON.stringify(data, null, 2);
+      });
+    }
+
+    function getCampaigns() {
+      fetch('http://localhost:5000/api/admin/campaigns', {
+        headers: {
+          'x-auth-token': token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('campaignsOutput').textContent = JSON.stringify(data, null, 2);
+      });
+    }
+
+    function approveCampaign() {
+      const id = document.getElementById('approveCampaignId').value;
+      fetch(`http://localhost:5000/api/admin/campaigns/${id}/approve`, {
+        method: 'PATCH',
+        headers: {
+          'x-auth-token': token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ verificationNotes: "Approved via HTML tester" })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('approveOutput').textContent = JSON.stringify(data, null, 2);
+      });
+    }
+    function rejectCampaign() {
+  const id = document.getElementById('rejectCampaignId').value;
+  const notes = document.getElementById('rejectNotes').value;
+
+  fetch(`http://localhost:5000/api/admin/campaigns/${id}/reject`, {
+    method: 'PATCH',
+    headers: {
+      'x-auth-token': token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ verificationNotes: notes })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('rejectOutput').textContent = JSON.stringify(data, null, 2);
+  });
+}
+
+function verifyUser() {
+  const id = document.getElementById('verifyUserId').value;
+  const isVerified = document.getElementById('isVerified').value === 'true';
+
+  fetch(`http://localhost:5000/api/admin/users/${id}/verify`, {
+    method: 'PATCH',
+    headers: {
+      'x-auth-token': token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ isVerified })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('verifyOutput').textContent = JSON.stringify(data, null, 2);
+  });
+}
+
+function getWithdrawals() {
+  const status = document.getElementById('withdrawalStatus').value;
+
+  fetch(`http://localhost:5000/api/admin/withdrawals?status=${status}`, {
+    headers: {
+      'x-auth-token': token
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('withdrawalOutput').textContent = JSON.stringify(data, null, 2);
+  });
+}
+
+function processWithdrawal() {
+  const campaignId = document.getElementById('processCampaignId').value;
+  const withdrawalId = document.getElementById('processWithdrawalId').value;
+  const status = document.getElementById('processStatus').value;
+  const transactionId = document.getElementById('transactionId').value;
+  const notes = document.getElementById('notes').value;
+
+  fetch(`http://localhost:5000/api/admin/withdrawals/${campaignId}/${withdrawalId}`, {
+    method: 'PATCH',
+    headers: {
+      'x-auth-token': token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status, transactionId, notes })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('processOutput').textContent = JSON.stringify(data, null, 2);
+  });
+}
+
+function getStats() {
+  fetch('http://localhost:5000/api/admin/stats', {
+    headers: {
+      'x-auth-token': token
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('statsOutput').textContent = JSON.stringify(data, null, 2);
+  });
+}
+
+  </script>
+</body>
+</html>
