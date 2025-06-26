@@ -12,11 +12,20 @@ const TopCampaigns = () => {
     const fetchTopCampaigns = async () => {
       try {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/campaign/all?limit=3&sortBy=createdAt&sortOrder=desc`);
-        setCampaigns(res.data.campaigns);
+        const data = res.data;
+
+        if (Array.isArray(data.campaigns)) {
+          setCampaigns(data.campaigns);
+        } else {
+          console.warn("Expected campaigns array but got:", data);
+          setCampaigns([]);
+        }
       } catch (err) {
         console.error('Error fetching top campaigns:', err);
+        setCampaigns([]);
       }
     };
+
     fetchTopCampaigns();
   }, []);
 
@@ -33,7 +42,7 @@ const TopCampaigns = () => {
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {campaigns.map((campaign) => (
+          {Array.isArray(campaigns) && campaigns.map((campaign) => (
             <CampaignCard key={campaign._id} campaign={campaign} />
           ))}
         </div>
