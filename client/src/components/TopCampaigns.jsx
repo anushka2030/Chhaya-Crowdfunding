@@ -11,7 +11,7 @@ const TopCampaigns = () => {
   useEffect(() => {
     const fetchTopCampaigns = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/campaign/all?limit=3&sortBy=createdAt&sortOrder=desc');
+        const res = await axios.get('${process.env.REACT_APP_API_URL}/campaign/all?limit=3&sortBy=createdAt&sortOrder=desc');
         setCampaigns(res.data.campaigns);
       } catch (err) {
         console.error('Error fetching top campaigns:', err);

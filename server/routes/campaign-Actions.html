@@ -46,7 +46,7 @@
   <pre id="output"></pre>
 
   <script>
-    const base = 'http://localhost:5000/api/campaign';
+    const base = '${process.env.REACT_APP_API_URL}/campaign';
 
     function getToken() {
       return document.getElementById('token').value.trim();

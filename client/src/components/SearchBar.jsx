@@ -11,7 +11,7 @@ const SearchBar = () => {
 
   const fetchMatches = async (text) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/campaign/all?title=${encodeURIComponent(text)}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/campaign/all?title=${encodeURIComponent(text)}`);
       setDropdownResults(response.data.campaigns);
       setShowDropdown(true);
     } catch (error) {

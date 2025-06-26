@@ -55,7 +55,7 @@ const RequestOTP = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/request-otp",
+        "${process.env.REACT_APP_API_URL}/auth/request-otp",
         { email: values.email }
       );
       alert(response.data.msg || "OTP sent to your email!");
@@ -76,7 +76,7 @@ const RequestOTP = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
+        "${process.env.REACT_APP_API_URL}/auth/verify-otp",
         { email: values.email, otp: values.otp }
       );
 
@@ -103,7 +103,7 @@ const RequestOTP = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/request-otp",
+        "${process.env.REACT_APP_API_URL}/auth/request-otp",
         { email: values.email }
       );
       alert(response.data.msg || "New OTP sent to your email!");

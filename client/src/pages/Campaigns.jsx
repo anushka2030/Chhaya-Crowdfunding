@@ -9,7 +9,7 @@ const Campaigns = () => {
   const [showPreview, setShowPreview] = useState(false);
 
   const token = localStorage.getItem('token');
-  const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const baseURL = process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}';
   const params = new URLSearchParams(window.location.search);
   const status = params.get('status');
 

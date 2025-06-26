@@ -13,7 +13,7 @@ const CauseCampaigns = () => {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/causes/${id}/campaigns`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/causes/${id}/campaigns`);
         setCampaigns(res.data.campaigns);
         setCauseName(res.data.cause.name);
       } catch (err) {

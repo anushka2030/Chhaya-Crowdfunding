@@ -85,7 +85,7 @@
         
         <h3>API Endpoint:</h3>
         <label for="apiEndpoint">API Endpoint:</label><br>
-        <input type="text" id="apiEndpoint" name="apiEndpoint" value="http://localhost:5000/api/campaign/create" placeholder="Enter API endpoint"><br><br>
+        <input type="text" id="apiEndpoint" name="apiEndpoint" value="${process.env.REACT_APP_API_URL}/campaign/create" placeholder="Enter API endpoint"><br><br>
         
         <button type="submit">Create Campaign</button>
         <button type="button" onclick="testEndpoint()">Test Endpoint Availability</button>

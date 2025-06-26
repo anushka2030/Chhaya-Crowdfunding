@@ -11,7 +11,7 @@ const UrgentBanner = () => {
       try {
         setLoading(true);
         // Fetch campaigns with urgent filter, sorted by latest first
-      const response = await fetch('http://localhost:5000/api/campaign/all?status=active&sortBy=createdAt&sortOrder=desc&limit=50');
+      const response = await fetch('${process.env.REACT_APP_API_URL}/campaign/all?status=active&sortBy=createdAt&sortOrder=desc&limit=50');
 
         
         if (!response.ok) {

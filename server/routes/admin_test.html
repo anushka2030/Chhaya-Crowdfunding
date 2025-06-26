@@ -80,7 +80,7 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
-      fetch('http://localhost:5000/api/auth/login', {
+      fetch('${process.env.REACT_APP_API_URL}/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -95,7 +95,7 @@
     }
 
     function getUsers() {
-      fetch('http://localhost:5000/api/admin/users', {
+      fetch('${process.env.REACT_APP_API_URL}/admin/users', {
         headers: {
           'x-auth-token': token
         }
@@ -108,7 +108,7 @@
 
     function deleteUser() {
       const userId = document.getElementById('deleteUserId').value;
-      fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+      fetch(`${process.env.REACT_APP_API_URL}/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'x-auth-token': token
@@ -121,7 +121,7 @@
     }
 
     function getCampaigns() {
-      fetch('http://localhost:5000/api/admin/campaigns', {
+      fetch('${process.env.REACT_APP_API_URL}/admin/campaigns', {
         headers: {
           'x-auth-token': token
         }
@@ -134,7 +134,7 @@
 
     function approveCampaign() {
       const id = document.getElementById('approveCampaignId').value;
-      fetch(`http://localhost:5000/api/admin/campaigns/${id}/approve`, {
+      fetch(`${process.env.REACT_APP_API_URL}/admin/campaigns/${id}/approve`, {
         method: 'PATCH',
         headers: {
           'x-auth-token': token,
@@ -151,7 +151,7 @@
   const id = document.getElementById('rejectCampaignId').value;
   const notes = document.getElementById('rejectNotes').value;
 
-  fetch(`http://localhost:5000/api/admin/campaigns/${id}/reject`, {
+  fetch(`${process.env.REACT_APP_API_URL}/admin/campaigns/${id}/reject`, {
     method: 'PATCH',
     headers: {
       'x-auth-token': token,
@@ -169,7 +169,7 @@ function verifyUser() {
   const id = document.getElementById('verifyUserId').value;
   const isVerified = document.getElementById('isVerified').value === 'true';
 
-  fetch(`http://localhost:5000/api/admin/users/${id}/verify`, {
+  fetch(`${process.env.REACT_APP_API_URL}/admin/users/${id}/verify`, {
     method: 'PATCH',
     headers: {
       'x-auth-token': token,
@@ -186,7 +186,7 @@ function verifyUser() {
 function getWithdrawals() {
   const status = document.getElementById('withdrawalStatus').value;
 
-  fetch(`http://localhost:5000/api/admin/withdrawals?status=${status}`, {
+  fetch(`${process.env.REACT_APP_API_URL}/admin/withdrawals?status=${status}`, {
     headers: {
       'x-auth-token': token
     }
@@ -204,7 +204,7 @@ function processWithdrawal() {
   const transactionId = document.getElementById('transactionId').value;
   const notes = document.getElementById('notes').value;
 
-  fetch(`http://localhost:5000/api/admin/withdrawals/${campaignId}/${withdrawalId}`, {
+  fetch(`${process.env.REACT_APP_API_URL}/admin/withdrawals/${campaignId}/${withdrawalId}`, {
     method: 'PATCH',
     headers: {
       'x-auth-token': token,
@@ -219,7 +219,7 @@ function processWithdrawal() {
 }
 
 function getStats() {
-  fetch('http://localhost:5000/api/admin/stats', {
+  fetch('${process.env.REACT_APP_API_URL}/admin/stats', {
     headers: {
       'x-auth-token': token
     }

@@ -29,7 +29,7 @@ const AllCampaigns = () => {
       });
       if (selectedCause !== 'all') params.append('cause', selectedCause);
       if (selectedLocation.trim()) params.append('location', selectedLocation.trim());
-      const response = await fetch(`http://localhost:5000/api/campaign/all?${params}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/campaign/all?${params}`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setCampaigns(data.campaigns || []);

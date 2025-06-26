@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Loader2, Camera, Save } from 'lucide-react';
 
 const UserProfile = () => {
-  const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const API_BASE = process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}';
 const STATIC_BASE = API_BASE.replace('/api', ''); // Removes "/api"
 
   const [user, setUser] = useState(null);
@@ -16,7 +16,7 @@ const STATIC_BASE = API_BASE.replace('/api', ''); // Removes "/api"
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/user/own-profile`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}'}/user/own-profile`, {
         headers: { 'x-auth-token': getAuthToken() }
       });
       const data = await res.json();
@@ -88,7 +88,7 @@ const STATIC_BASE = API_BASE.replace('/api', ''); // Removes "/api"
     formData.append('avatar', file);
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/user/upload-avatar`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}'}/user/upload-avatar`, {
         method: 'POST',
         headers: { 'x-auth-token': getAuthToken() },
         body: formData
@@ -110,7 +110,7 @@ const STATIC_BASE = API_BASE.replace('/api', ''); // Removes "/api"
     setMessage('');
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/user/update-profile`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}'}/user/update-profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

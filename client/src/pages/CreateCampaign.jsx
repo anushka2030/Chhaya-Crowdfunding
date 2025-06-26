@@ -49,7 +49,7 @@ const CreateCampaign = () => {
   const fetchCauses = async () => {
     try {
       setLoadingCauses(true);
-      const res = await fetch('http://localhost:5000/api/causes/get-causes');
+      const res = await fetch('${process.env.REACT_APP_API_URL}/causes/get-causes');
       const data = await res.json();
       setCauses(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -140,7 +140,7 @@ const CreateCampaign = () => {
         }
       });
 
-      const res = await fetch('http://localhost:5000/api/campaign/create', {
+      const res = await fetch('${process.env.REACT_APP_API_URL}/campaign/create', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`

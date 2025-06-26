@@ -11,7 +11,7 @@ const Users = () => {
   const [documentAction, setDocumentAction] = useState({ userId: null, docIndex: null, action: null });
 
   const token = localStorage.getItem('token');
-  const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const baseURL = process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}';
 
   const fetchUsers = async () => {
     try {

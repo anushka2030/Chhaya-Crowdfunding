@@ -66,7 +66,7 @@ const Dashboard = () => {
   // API call helper
   const apiCall = async (endpoint, options = {}) => {
     const token = getAuthToken();
-    const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    const baseURL = process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}';
     
     const config = {
       headers: {
@@ -240,7 +240,7 @@ const Dashboard = () => {
       const formData = new FormData();
       formData.append('avatar', file);
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/user/upload-avatar`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}'}/user/upload-avatar`, {
         method: 'POST',
         headers: {
           'x-auth-token': getAuthToken()

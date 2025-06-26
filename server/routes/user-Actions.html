@@ -32,7 +32,7 @@
   <pre id="output"></pre>
 
   <script>
-    const base = 'http://localhost:5000/api/user';
+    const base = '${process.env.REACT_APP_API_URL}/user';
     
     // Utility functions
     function getToken() {
@@ -87,7 +87,7 @@
       e.preventDefault();
       const form = new FormData(e.target);
       
-      const res = await fetch('http://localhost:5000/api/user/upload-avatar', {
+      const res = await fetch('${process.env.REACT_APP_API_URL}/user/upload-avatar', {
         method: 'POST',
         headers: {
           'x-auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2RjZWM5OWVhNzUxM2RkMGJmNGI2NSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ4OTUyNzI0LCJleHAiOjE3NDg5NTYzMjR9.azRqP314tLNU0yOy7YJnkU0vj8PvBRhwrI_-yVPXdRk'

@@ -59,7 +59,7 @@ const CampaignDetail = () => {
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/campaign/${id}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/campaign/${id}`);
         if (!res.ok) throw new Error('Failed to fetch campaign');
         const data = await res.json();
         setCampaign(data);

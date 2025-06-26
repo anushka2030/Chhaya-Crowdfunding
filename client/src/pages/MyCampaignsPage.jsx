@@ -8,7 +8,7 @@ const MyCampaignsPage = () => {
 
   const fetchMyCampaigns = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/user/my-campaigns', {
+      const response = await fetch('${process.env.REACT_APP_API_URL}/user/my-campaigns', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

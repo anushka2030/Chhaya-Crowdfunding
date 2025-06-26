@@ -31,7 +31,7 @@
       const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2RjZWM5OWVhNzUxM2RkMGJmNGI2NSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ4OTUwNDE3LCJleHAiOjE3NDg5NTQwMTd9.fKn0y-XaUz54m1EGEULhplVWbbKR9AaKMKnNnqKy4CA';        // Replace this
 
       try {
-        const res = await fetch(`http://localhost:5000/api/campaign/update/${campaignId}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/campaign/update/${campaignId}`, {
           method: 'PUT',
           headers: {
             'x-auth-token': token

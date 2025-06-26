@@ -9,7 +9,7 @@ const Raised = () => {
   const [sortOrder, setSortOrder] = useState('desc');
 
   const token = localStorage.getItem('token');
-  const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const baseURL = process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}';
 
   const fetchRaised = async () => {
     try {

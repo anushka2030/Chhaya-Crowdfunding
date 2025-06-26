@@ -22,7 +22,7 @@ const RequestWithdrawalPage = () => {
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/campaign/${id}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/campaign/${id}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.msg || 'Failed to load campaign');
         setCampaign(data);
@@ -45,7 +45,7 @@ const RequestWithdrawalPage = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(`http://localhost:5000/api/campaign/${id}/withdraw`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/campaign/${id}/withdraw`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -32,7 +32,7 @@ const DonationPage = () => {
   const fetchCampaign = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/campaign/${id}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/campaign/${id}`);
       if (!response.ok) throw new Error('Failed to fetch campaign');
       const data = await response.json();
       setCampaign(data);
@@ -88,7 +88,7 @@ const DonationPage = () => {
 
     setDonationLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/campaign/${id}/donate`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/campaign/${id}/donate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

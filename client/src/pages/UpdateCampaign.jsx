@@ -24,7 +24,7 @@ const UpdateCampaign = () => {
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/campaign/${id}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}'}/campaign/${id}`, {
           headers: { 'x-auth-token': getAuthToken() }
         });
         const data = await res.json();
@@ -72,7 +72,7 @@ const UpdateCampaign = () => {
     });
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/campaign/update/${id}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || '${process.env.REACT_APP_API_URL}'}/campaign/update/${id}`, {
         method: 'PUT',
         headers: { 'x-auth-token': getAuthToken() },
         body: form,
