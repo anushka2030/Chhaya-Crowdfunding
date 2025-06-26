@@ -829,7 +829,7 @@ const Dashboard = () => {
       <p>No campaigns created yet</p>
       <button 
         className="mt-2 text-teal-600 hover:text-teal-700 font-medium"
-        onClick={() => window.location.href = '/create-campaign'}
+        onClick={() => window.location.href = '/start-fundraiser'}
       >
         Create your first campaign
       </button>
