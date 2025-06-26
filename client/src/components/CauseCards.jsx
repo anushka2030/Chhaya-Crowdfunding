@@ -19,7 +19,9 @@ const CauseCards = () => {
   useEffect(() => {
     const fetchCauses = async () => {
       try {
-        const res = await axios.get('${process.env.REACT_APP_API_URL}/causes/get-causes');
+       const res = await axios.get(`${process.env.REACT_APP_API_URL}/causes/get-causes`);
+setCauses(Array.isArray(res.data) ? res.data : []);
+
         setCauses(res.data);
       } catch (err) {
         console.error('Failed to fetch causes:', err);
