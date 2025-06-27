@@ -122,7 +122,7 @@ const CampaignDetail = () => {
               >
                 {/* Main Image */}
                 <img
-                  src={`http://localhost:5000${campaign.images?.[currentImageIndex]?.url || campaign.images?.[0]?.url}`}
+                  src={campaign.images?.[currentImageIndex]?.url || campaign.images?.[0]?.url}
                   alt={`${campaign.title} - Image ${currentImageIndex + 1}`}
                   className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out"
                 />

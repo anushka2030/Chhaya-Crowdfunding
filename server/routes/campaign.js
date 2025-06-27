@@ -165,24 +165,29 @@ router.put('/update/:id', authMiddleware, upload.array('images', 5), async (req,
       }
     });
 
-    // Handle new images
+    // ✅ FIXED IMAGE UPLOAD BLOCK
+    const baseUrl = process.env.REACT_APP_UPLOAD_URL || 'https://chhaya-81p3.onrender.com/uploads';
     if (req.files && req.files.length > 0) {
       const newImages = req.files.map((file, index) => ({
-      url: `/uploads${file.filename.replace(/\\/g, '/')}`,
+        url: `${baseUrl}/${file.filename.replace(/\\/g, '/')}`,
         caption: req.body[`imageCaption_${index}`] || '',
         isPrimary: campaign.images.length === 0 && index === 0
       }));
+
+      // Merge with existing images (or replace, your choice)
       updates.images = [...campaign.images, ...newImages];
     }
 
     Object.assign(campaign, updates);
     await campaign.save();
+
     res.json(campaign);
   } catch (err) {
     console.error('Error updating campaign:', err);
     res.status(500).json({ msg: 'Server error', error: err.message });
   }
 });
+
 
 // Donate to a campaign
 // Donate to a campaign
