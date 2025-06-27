@@ -68,15 +68,18 @@ router.post('/create', authMiddleware, upload.array('images', 5), async (req, re
 
     // Process uploaded images
     const images = [];
-    if (req.files && req.files.length > 0) {
-      req.files.forEach((file, index) => {
-        images.push({
-          url: `/uploads/${file.filename.replace(/\\/g, '/')}`, 
-          caption: req.body[`imageCaption_${index}`] || '',
-          isPrimary: index === 0 // First image is primary
-        });
-      });
-    }
+const baseUrl = process.env.REACT_APP_UPLOAD_URL || 'https://chhaya-81p3.onrender.com/uploads';
+
+if (req.files && req.files.length > 0) {
+  req.files.forEach((file, index) => {
+    images.push({
+      url: `${baseUrl}/${file.filename.replace(/\\/g, '/')}`, // Full URL
+      caption: req.body[`imageCaption_${index}`] || '',
+      isPrimary: index === 0 // First image is primary
+    });
+  });
+}
+
 
     // Create campaign object
     const campaignData = {
