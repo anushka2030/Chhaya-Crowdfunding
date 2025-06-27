@@ -52,6 +52,8 @@ const CreateCampaign = () => {
       const res = await fetch(`https://chhaya-81p3.onrender.com/api/causes/get-causes`);
 ;
       const data = await res.json();
+  
+
       setCauses(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
@@ -141,7 +143,7 @@ const CreateCampaign = () => {
         }
       });
 
-      const res = await fetch('${process.env.REACT_APP_API_URL}/campaign/create', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/campaign/create`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`
