@@ -18,7 +18,7 @@ const causeSchema = new mongoose.Schema({
   },
   color: {
     type: String, // Hex color for UI theming
-    default: '#3B82F6'
+    default: '#008080'
   },
   isActive: {
     type: Boolean,
