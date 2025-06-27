@@ -49,7 +49,8 @@ const CreateCampaign = () => {
   const fetchCauses = async () => {
     try {
       setLoadingCauses(true);
-      const res = await fetch('${process.env.REACT_APP_API_URL}/causes/get-causes');
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/causes/get-causes`);
+;
       const data = await res.json();
       setCauses(Array.isArray(data) ? data : []);
     } catch (err) {
