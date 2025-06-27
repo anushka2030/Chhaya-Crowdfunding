@@ -128,37 +128,54 @@ const CreateCampaign = () => {
     setMessage(null);
     setError(null);
     setIsLoading(true);
-    try {
+     try {
       const token = localStorage.getItem('token');
+      if (!token) throw new Error('Not authenticated.');
+
       const form = new FormData();
-
       Object.entries(formData).forEach(([key, val]) => {
-        if (val) form.append(key, val);
+        if (val !== '' && val != null) form.append(key, val);
       });
-
       images.forEach((img, i) => {
         form.append('images', img);
-        if (imageCaptions[i]) {
-          form.append(`imageCaption_${i}`, imageCaptions[i]);
-        }
+        if (imageCaptions[i]) form.append(`imageCaption_${i}`, imageCaptions[i]);
       });
 
       const res = await fetch(`${process.env.REACT_APP_API_URL}/campaign/create`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: form
       });
 
+      // Debug logging
+      console.log('Response status:', res.status);
+      const contentType = res.headers.get('content-type');
+      console.log('Content-Type:', contentType);
+
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.msg || 'Campaign creation failed');
+        let errMsg = 'Campaign creation failed';
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            const err = await res.json();
+            errMsg = err.msg || JSON.stringify(err);
+          } catch {
+            console.warn('Non-JSON error body');
+          }
+        } else {
+          const text = await res.text();
+          errMsg = text || errMsg;
+        }
+        throw new Error(errMsg);
       }
 
-      const result = await res.json();
-      console.log('Campaign created:', result);
-      setMessage('Campaign created successfully!');
+      let result;
+      if (contentType && contentType.includes('application/json')) {
+        result = await res.json();
+      } else {
+        result = { msg: await res.text() };
+      }
+      console.log('Campaign created result:', result);
+      console.message('Campaign Created Successfully!');
       setFormData({
         title: '',
         description: '',
