@@ -75,7 +75,7 @@ const CauseCards = () => {
                   style={{ background: `linear-gradient(135deg, ${cause.color}20, ${cause.color}40)` }}
                 />
                 
-                <div className="relative p-6 text-center">
+                <div className="relative p-6">
                   <div className="relative mb-4">
                     <div 
                       className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
@@ -89,18 +89,22 @@ const CauseCards = () => {
                     <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full animate-pulse" style={{ backgroundColor: cause.color }} />
                   </div>
 
-                  <h3 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-gray-800 transition-colors">
+                  <h3 className="font-bold text-gray-900 mb-3 text-lg group-hover:text-gray-800 transition-colors text-center">
                     {cause.name}
                   </h3>
 
-                  <div className="flex items-center justify-center space-x-1">
+                  <p className="text-gray-600 text-sm mb-4 leading-relaxed text-center">
+                    {cause.description}
+                  </p>
+
+                  <div className="flex items-center justify-center space-x-1 mb-3">
                     <span className="text-2xl font-bold text-gray-800">{campaignCount}</span>
                     <span className="text-sm text-gray-500 font-medium">
                       {campaignCount === 1 ? 'campaign' : 'campaigns'}
                     </span>
                   </div>
 
-                  <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                     <div 
                       className="h-full rounded-full transition-all duration-1000 ease-out"
                       style={{ 
