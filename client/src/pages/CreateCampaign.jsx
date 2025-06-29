@@ -175,7 +175,6 @@ const CreateCampaign = () => {
         result = { msg: await res.text() };
       }
       console.log('Campaign created result:', result);
-      console.message('Campaign Created Successfully!');
       setFormData({
         title: '',
         description: '',
