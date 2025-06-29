@@ -170,7 +170,7 @@ const STATIC_BASE = API_BASE.replace('/api', ''); // Removes "/api"
                         ? `${STATIC_BASE}${user.profilePicture}`
                         : '/default-avatar.png'
                     }
-                    alt="Profile"
+              
                     className="w-full h-full object-cover"
                   />
                 </div>

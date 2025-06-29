@@ -1133,7 +1133,7 @@ const Dashboard = () => {
                   {user?.profilePicture ? (
                     <img 
                       src={`https://chhaya-81p3.onrender.com/uploads${user.profilePicture}`} 
-                      alt="Profile" 
+                      
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
