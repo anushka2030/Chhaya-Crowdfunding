@@ -147,7 +147,7 @@ const MyCampaignDetails = () => {
                 <div key={i} className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
                   <div className="aspect-square overflow-hidden bg-gradient-to-br from-cyan-100 to-teal-100">
                     <img
-                      src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${img.url}`}
+                      src={`${process.env.REACT_APP_API_URL || 'https://chhaya-81p3.onrender.com/uploads'}${img.url}`}
                       alt={img.caption || `Image ${i + 1}`}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />

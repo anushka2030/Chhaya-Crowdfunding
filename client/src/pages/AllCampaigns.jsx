@@ -103,8 +103,8 @@ const AllCampaigns = () => {
     const daysLeft = getDaysLeft(campaign.endDate);
     const expired = isCampaignExpired(campaign.endDate);
     const goalReached = isCampaignGoalReached(campaign.raisedAmount || 0, campaign.goalAmount);
-    const imgUrl = campaign.images?.[0]?.url ? encodeURI(`http://localhost:5000${campaign.images[0].url}`) : '/api/placeholder/400/250';
-    const profileUrl = campaign.creator?.profilePicture ? encodeURI(`http://localhost:5000${campaign.creator.profilePicture}`) : '/api/placeholder/32/32';
+    const imgUrl = campaign.images?.[0]?.url ? encodeURI(`https://chhaya-81p3.onrender.com/uploads${campaign.images[0].url}`) : '/api/placeholder/400/250';
+    const profileUrl = campaign.creator?.profilePicture ? encodeURI(`https://chhaya-81p3.onrender.com/uploads${campaign.creator.profilePicture}`) : '/api/placeholder/32/32';
 
     return (
       <div className={`bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border group cursor-pointer ${

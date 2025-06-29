@@ -36,7 +36,7 @@ const CampaignCard = ({ campaign }) => {
 
 const imageUrl = rawImageUrl.startsWith('http')
   ? rawImageUrl
-  : `http://localhost:5000${rawImageUrl || '/uploads/placeholder.jpg'}`; // optional
+  : `https://chhaya-81p3.onrender.com/uploads${rawImageUrl || '/placeholder.jpg'}`; // optional
 
   return (
     <div 

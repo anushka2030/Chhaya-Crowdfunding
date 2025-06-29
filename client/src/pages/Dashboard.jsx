@@ -1132,7 +1132,7 @@ const Dashboard = () => {
                 <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center">
                   {user?.profilePicture ? (
                     <img 
-                      src={`http://localhost:5000${user.profilePicture}`} 
+                      src={`https://chhaya-81p3.onrender.com/uploads${user.profilePicture}`} 
                       alt="Profile" 
                       className="w-10 h-10 rounded-full object-cover"
                     />

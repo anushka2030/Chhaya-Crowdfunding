@@ -119,7 +119,7 @@ const DonationPage = () => {
   const getPrimaryImage = () => {
     if (!campaign?.images?.length) return null;
     const img = campaign.images.find(i => i.isPrimary) || campaign.images[0];
-    return `http://localhost:5000${img.url}`;
+    return `https://chhaya-81p3.onrender.com/uploads${img.url}`;
   };
 
   if (loading) return (
