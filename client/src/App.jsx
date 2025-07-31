@@ -30,6 +30,7 @@ import UserProfile from './pages/UserProfile';
 import MyCampaignsPage from './pages/MyCampaignsPage';
 import RequestWithdrawalPage from './pages/RequestWithdrawalPage';
 
+
 function App() {
 
   const [loading, setLoading] = useState(true);
@@ -136,10 +137,9 @@ function App() {
         />
          
   {/* Conditional dashboard routes */}
-  {isLoggedIn && user?.role === 'user' && (
-    <Route path="/user/dashboard" element={<Dashboard />} />
-  )}
+  <Route path="/user/dashboard" element={<Dashboard />} />
 
+  
   {isLoggedIn && user?.role === 'admin' && (
     <Route path="/admin/dashboard" element={<Dashboard />} />
   )}
