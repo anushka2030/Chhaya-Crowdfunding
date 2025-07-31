@@ -1,48 +1,56 @@
-# 🌱 Chhaya - Crowdfunding Platform for NGOs
+# 🌟 Chhaya - Crowdfunding Platform
 
-**Chhaya** is a MERN stack crowdfunding platform designed to help **NGOs raise funds** for social causes. It provides a secure and user-friendly interface for NGOs to create campaigns and for donors to contribute with ease. The platform features OTP-based authentication, donor and NGO dashboards, campaign tracking, and more.
+**Chhaya** is a MERN-stack-based crowdfunding platform that allows users and NGOs to raise and contribute funds for social causes. With a modern UI and robust role-based access, it enables seamless campaign management, secure donations, and administrative control for transparency and trust.
 
 ---
 
 ## 🚀 Live Demo
 
-> [https://chhaya-crowdfunding.vercel.app]
+🔗 [https://chhaya-crowdfunding.vercel.app](https://chhaya-crowdfunding.vercel.app)
 
 ---
 
-## 🧠 Features
+## ✨ Features
 
-- 🔐 **OTP-based User Authentication** via email
-- 👥 **Role-Based Access** for NGOs and Donors
-- 📝 NGOs can **create, manage, and monitor campaigns**
-- 💳 Donors can **browse campaigns** and **donate securely**
-- 🖼️ Upload campaign **images and documentation**
-- 📈 Track **donation history** and **campaign progress**
-- 🔒 JWT-based session management
-- ⚙️ Admin support (extendable)
+### 👤 User Functionality
+- 🔍 Browse and search campaigns by title or cause
+- ➕ Create your own fundraising campaigns
+- 💸 Donate securely to any campaign
+- 📊 Track all campaigns created and donations made from the user dashboard
+- 👤 Update personal information and view donation activity in your profile
+- 🏦 Request fund withdrawal once your campaign reaches its goal or sufficient funds are raised
 
----
 
-## 🛠️ Tech Stack
+### 👑 Admin Functionality
+- 🗂️ Manage all campaigns across the platform
+- 🧩 Create and manage causes (categories)
+- 📈 Track status of fundraisers and manage goals
+- 👥 Monitor all users and their campaign involvement
+- ➕ Create campaigns on behalf of verified NGOs or causes
+- 🔐 Access a role-based dashboard with administrative insights
+- 🏦 Review and process fund withdrawal requests from users
 
-### 💻 Frontend:
-- React.js
-- Redux Toolkit
-- Tailwind CSS
-- React Router DOM
-- Axios
-- Lucide Icons
 
-### 🌐 Backend:
-- Node.js
-- Express.js
-- MongoDB with Mongoose
-- Nodemailer (for OTP)
-- Multer (for file uploads)
-- dotenv (env configuration)
-- CORS, Helmet (security)
+### 🛠️ Additional Features
+- 💰 Pricing Calculation Page — estimate final raised funds after payment gateway fees
+- ❓ FAQs Page — answers common donor and creator questions
+- ✅ OTP-based registration and JWT-based authentication
+- 📦 Clean UI with real-time form validation and toast notifications
 
 ---
 
-## 📂 Folder Structure
+## 🧰 Tech Stack
 
+- **Frontend**: React.js, Tailwind CSS, Redux Toolkit
+- **Backend**: Node.js, Express.js, MongoDB
+- **Authentication**: JWT + OTP via Email
+- **Deployment**: Vercel (Frontend), Render (Backend)
+
+---
+
+## 📦 Getting Started
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/anushka2030/Chhaya-Crowdfunding.git
+cd Chhaya-Crowdfunding
